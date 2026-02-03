@@ -23,14 +23,16 @@ use Illuminate\Support\Facades\Storage;
 
 class AdminDashboardController extends Controller
 {
-    // Dashboard
+    // ===================================
+    // DASHBOARD UTAMA
+    // ===================================
     public function index()
     {
         try {
-            $totalProducts = Product::count();
-            $totalSuppliers = Supplier::count();
+            $totalProducts = Product::count(); // Total Jamaah
+            $totalSuppliers = Supplier::count(); // Total Agen
             $totalUsers = User::count();
-            $totalCategories = Category::count();
+            $totalCategories = Category::count(); // Total Paket
 
             $chartData = ['categories' => [], 'incoming' => [], 'outgoing' => []];
             for ($i = 6; $i >= 0; $i--) {
@@ -57,59 +59,42 @@ class AdminDashboardController extends Controller
             $recentUsers = User::latest()->limit(5)->get();
 
             return view('pages.admin.dashboard.index', compact(
-                'totalProducts',
-                'totalSuppliers',
-                'totalUsers',
-                'totalCategories',
-                'chartData',
-                'recentTransactions',
-                'recentUsers',
-                'lowStockProducts'
+                'totalProducts', 'totalSuppliers', 'totalUsers', 'totalCategories', 
+                'chartData', 'recentTransactions', 'recentUsers', 'lowStockProducts'
             ));
         } catch (\Exception $e) {
             return view('pages.admin.dashboard.index', [
-                'totalProducts' => 0,
-                'totalSuppliers' => 0,
-                'totalUsers' => 0,
-                'totalCategories' => 0,
-                'chartData' => [
-                    'categories' => [],
-                    'incoming' => [],
-                    'outgoing' => []
-                ],
-                'recentTransactions' => collect([]),
-                'recentUsers' => collect([]),
-                'lowStockProducts' => collect([])
-            ])->with('error', 'Gagal memuat data dashboard: ' . $e->getMessage());
+                'totalProducts' => 0, 'totalSuppliers' => 0, 'totalUsers' => 0, 'totalCategories' => 0,
+                'chartData' => ['categories' => [], 'incoming' => [], 'outgoing' => []],
+                'recentTransactions' => collect([]), 'recentUsers' => collect([]), 'lowStockProducts' => collect([])
+            ])->with('error', 'Gagal memuat dashboard');
         }
     }
 
-    // Users Management
+    // ===================================
+    // MANAJEMEN PENGGUNA (USERS)
+    // ===================================
     public function userList(Request $request)
     {
         $query = User::query();
-
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                $q->where('name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%");
             });
         }
-
         if ($request->filled('role')) {
             $query->where('role', $request->role);
         }
-
         $users = $query->latest()->paginate(10);
-        $roles = ['Admin', 'Manajer Operasional', 'Staf Registrasi']; // Fixed Roles
+        $roles = ['Admin', 'User', 'Staf Registrasi']; // Roles diperbarui
 
         return view('pages.admin.users.index', compact('users', 'roles'));
     }
 
     public function userCreate()
     {
-        $roles = ['Admin', 'Manajer Operasional', 'Staf Registrasi']; // Fixed Roles
+        $roles = ['Admin', 'User', 'Staf Registrasi'];
         return view('pages.admin.users.create', compact('roles'));
     }
 
@@ -119,7 +104,7 @@ class AdminDashboardController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:Admin,Manajer Operasional,Staf Registrasi', // Updated validation
+            'role' => 'required|in:Admin,User,Staf Registrasi',
         ]);
 
         User::create([
@@ -129,7 +114,7 @@ class AdminDashboardController extends Controller
             'role' => $request->role,
         ]);
 
-        return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan');
+        return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil ditambahkan');
     }
 
     public function userShow(User $user)
@@ -139,7 +124,7 @@ class AdminDashboardController extends Controller
 
     public function userEdit(User $user)
     {
-        $roles = ['Admin', 'Manajer Operasional', 'Staf Registrasi']; // Fixed Roles
+        $roles = ['Admin', 'User', 'Staf Registrasi'];
         return view('pages.admin.users.edit', compact('user', 'roles'));
     }
 
@@ -148,23 +133,17 @@ class AdminDashboardController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
-            'role' => 'required|in:Admin,Manajer Operasional,Staf Registrasi', // Updated validation
+            'role' => 'required|in:Admin,User,Staf Registrasi',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'role' => $request->role,
-        ];
-
+        $data = $request->only('name', 'email', 'role');
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }
 
         $user->update($data);
-
-        return redirect()->route('admin.users.index')->with('success', 'User berhasil diupdate');
+        return redirect()->route('admin.users.index')->with('success', 'Data pengguna diperbarui');
     }
 
     public function confirmDeleteUser(User $user)
@@ -174,118 +153,31 @@ class AdminDashboardController extends Controller
 
     public function userDestroy(User $user)
     {
-        DB::beginTransaction();
-        try {
-            if ($user->id === auth()->id()) {
-                return redirect()->route('admin.users.index')
-                    ->with('error', 'Anda tidak dapat menghapus akun sendiri');
-            }
-
-            $hasTransactions = StockTransaction::where('user_id', $user->id)->exists();
-
-            if ($hasTransactions) {
-                return redirect()->route('admin.users.index')
-                    ->with('error', 'Tidak dapat menghapus pengguna karena memiliki riwayat transaksi terkait');
-            }
-
-            $userName = $user->name;
-            $user->delete();
-
-            DB::commit();
-
-            return redirect()->route('admin.users.index')
-                ->with('success', "Pengguna '{$userName}' berhasil dihapus");
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->route('admin.users.index')
-                ->with('error', 'Gagal menghapus pengguna: ' . $e->getMessage());
+        if ($user->id === auth()->id()) {
+            return redirect()->route('admin.users.index')->with('error', 'Tidak dapat menghapus akun sendiri');
         }
+        $user->delete();
+        return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil dihapus');
     }
 
-    // Products Management
+    // ===================================
+    // MANAJEMEN MANIFEST (PRODUCTS)
+    // ===================================
     public function productList(Request $request)
     {
-        $query = Product::query()
-            ->with(['category', 'supplier'])
-            ->withCount('stockTransactions');
-
-        $query->select('products.*')
-            ->addSelect([
-                'current_stock' => StockTransaction::selectRaw('COALESCE(SUM(CASE WHEN type = "Masuk" THEN quantity ELSE -quantity END), 0)')
-                    ->whereColumn('product_id', 'products.id')
-            ]);
-
+        $query = Product::with(['category', 'supplier']);
         if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('sku', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
-            });
+            $query->where('name', 'like', "%{$request->search}%")->orWhere('sku', 'like', "%{$request->search}%");
         }
-
-        if ($request->filled('category')) {
-            $query->where('category_id', $request->input('category'));
-        }
-
-        if ($request->filled('stock_status')) {
-            $status = $request->input('stock_status');
-            $query->where(function($q) use ($status) {
-                switch ($status) {
-                    case 'out_of_stock':
-                        $q->whereRaw('(SELECT COALESCE(SUM(CASE WHEN type = "Masuk" THEN quantity ELSE -quantity END), 0) FROM stock_transactions WHERE product_id = products.id) <= 0');
-                        break;
-                    case 'low_stock':
-                        $q->whereRaw('(SELECT COALESCE(SUM(CASE WHEN type = "Masuk" THEN quantity ELSE -quantity END), 0) FROM stock_transactions WHERE product_id = products.id) > 0')
-                           ->whereRaw('(SELECT COALESCE(SUM(CASE WHEN type = "Masuk" THEN quantity ELSE -quantity END), 0) FROM stock_transactions WHERE product_id = products.id) <= products.min_stock');
-                        break;
-                    case 'in_stock':
-                        $q->whereRaw('(SELECT COALESCE(SUM(CASE WHEN type = "Masuk" THEN quantity ELSE -quantity END), 0) FROM stock_transactions WHERE product_id = products.id) > products.min_stock');
-                        break;
-                }
-            });
-        }
-
-        $sortOptions = [
-            'name_asc' => ['name', 'asc'],
-            'name_desc' => ['name', 'desc'],
-            'stock_asc' => ['current_stock', 'asc'],
-            'stock_desc' => ['current_stock', 'desc'],
-            'price_asc' => ['selling_price', 'asc'],
-            'price_desc' => ['selling_price', 'desc'],
-        ];
-
-        $sort = $request->input('sort', 'name_asc');
-        [$sortColumn, $sortDirection] = $sortOptions[$sort] ?? ['name', 'asc'];
-
-        if ($sortColumn === 'current_stock') {
-            $query->orderByRaw('(SELECT COALESCE(SUM(CASE WHEN type = "Masuk" THEN quantity ELSE -quantity END), 0) FROM stock_transactions WHERE product_id = products.id) ' . $sortDirection);
-        } else {
-            $query->orderBy($sortColumn, $sortDirection);
-        }
-
         $products = $query->paginate(15);
-        $categories = Category::orderBy('name')->get();
-
+        
         $stockStats = [
-            'in_stock' => DB::table('products')
-                ->selectRaw('COUNT(*) as count')
-                ->whereRaw('(SELECT COALESCE(SUM(CASE WHEN type = "Masuk" THEN quantity ELSE -quantity END), 0) FROM stock_transactions WHERE product_id = products.id) > min_stock')
-                ->first()->count,
-
-            'low_stock' => DB::table('products')
-                ->selectRaw('COUNT(*) as count')
-                ->whereRaw('(SELECT COALESCE(SUM(CASE WHEN type = "Masuk" THEN quantity ELSE -quantity END), 0) FROM stock_transactions WHERE product_id = products.id) > 0')
-                ->whereRaw('(SELECT COALESCE(SUM(CASE WHEN type = "Masuk" THEN quantity ELSE -quantity END), 0) FROM stock_transactions WHERE product_id = products.id) <= min_stock')
-                ->first()->count,
-
-            'out_of_stock' => DB::table('products')
-                ->selectRaw('COUNT(*) as count')
-                ->whereRaw('(SELECT COALESCE(SUM(CASE WHEN type = "Masuk" THEN quantity ELSE -quantity END), 0) FROM stock_transactions WHERE product_id = products.id) <= 0')
-                ->first()->count,
+            'in_stock' => Product::whereColumn('current_stock', '>', 'min_stock')->count(),
+            'low_stock' => Product::where('current_stock', '>', 0)->whereColumn('current_stock', '<=', 'min_stock')->count(),
+            'out_of_stock' => Product::where('current_stock', '<=', 0)->count(),
         ];
 
-        return view('pages.admin.products.index', compact('products', 'categories', 'stockStats'));
+        return view('pages.admin.products.index', compact('products', 'stockStats'));
     }
 
     public function productCreate()
@@ -302,42 +194,25 @@ class AdminDashboardController extends Controller
             'sku' => 'required|string|max:100|unique:products',
             'category_id' => 'required|exists:categories,id',
             'supplier_id' => 'nullable|exists:suppliers,id',
-            'description' => 'nullable|string',
-            'purchase_price' => 'required|numeric|min:0',
-            'selling_price' => 'required|numeric|min:0',
-            'current_stock' => 'required|integer|min:0',
-            'min_stock' => 'required|integer|min:0',
-            'unit' => 'required|string|max:20',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'purchase_price' => 'required|numeric',
+            'selling_price' => 'required|numeric',
+            'current_stock' => 'required|integer',
+            'min_stock' => 'required|integer',
+            'unit' => 'required|string',
+            'image' => 'nullable|image|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('product_images', 'public');
         }
 
-        $product = Product::create($validated);
-
-        if ($validated['current_stock'] > 0) {
-            StockTransaction::create([
-                'product_id' => $product->id,
-                'user_id' => auth()->id(),
-                'type' => 'Masuk',
-                'quantity' => $validated['current_stock'],
-                'notes' => 'Stok awal produk',
-                'date' => now(),
-            ]);
-        }
-
-        return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan');
+        Product::create($validated);
+        return redirect()->route('admin.products.index')->with('success', 'Jamaah berhasil didaftarkan');
     }
 
     public function productShow(Product $product)
     {
-        $product->load(['category', 'supplier']);
-        $product->load(['stockTransactions' => function($q) {
-            $q->orderBy('date', 'desc')->with('user')->paginate(10);
-        }]);
-
+        $product->load(['category', 'supplier', 'stockTransactions.user']);
         return view('pages.admin.products.show', compact('product'));
     }
 
@@ -350,88 +225,30 @@ class AdminDashboardController extends Controller
 
     public function productUpdate(Request $request, Product $product)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'sku' => 'required|string|max:100|unique:products,sku,' . $product->id,
-            'category_id' => 'required|exists:categories,id',
-            'supplier_id' => 'nullable|exists:suppliers,id',
-            'description' => 'nullable|string',
-            'purchase_price' => 'required|numeric|min:0',
-            'selling_price' => 'required|numeric|min:0|gte:purchase_price',
-            'min_stock' => 'required|integer|min:0',
-            'unit' => 'required|string|max:20',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'remove_image' => 'nullable|boolean',
-        ]);
-
-        try {
-            if ($request->hasFile('image')) {
-                if ($product->image) {
-                    Storage::disk('public')->delete($product->image);
-                }
-                $validatedData['image'] = $request->file('image')->store('product_images', 'public');
-            } elseif ($request->input('remove_image')) {
-                if ($product->image) {
-                    Storage::disk('public')->delete($product->image);
-                }
-                $validatedData['image'] = null;
-            }
-
-            $product->update($validatedData);
-
-            return redirect()->route('admin.products.index')->with('success', 'Produk berhasil diperbarui');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal memperbarui produk: ' . $e->getMessage())->withInput();
+        $data = $request->all();
+        if ($request->hasFile('image')) {
+            if ($product->image) Storage::disk('public')->delete($product->image);
+            $data['image'] = $request->file('image')->store('product_images', 'public');
         }
+        $product->update($data);
+        return redirect()->route('admin.products.index')->with('success', 'Data diperbarui');
     }
 
     public function confirmDeleteProduct(Product $product)
     {
-        $product->load(['category', 'supplier']);
         return view('pages.admin.products.delete', compact('product'));
     }
 
     public function destroy(Product $product)
     {
-        DB::beginTransaction();
-        try {
-            if ($product->image) {
-                Storage::disk('public')->delete($product->image);
-            }
-            $product->stockTransactions()->delete();
-            $productName = $product->name;
-            $product->delete();
-
-            DB::commit();
-            return redirect()->route('admin.products.index')->with('success', "Produk '{$productName}' berhasil dihapus");
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->route('admin.products.index')->with('error', 'Gagal menghapus produk: ' . $e->getMessage());
-        }
+        if ($product->image) Storage::disk('public')->delete($product->image);
+        $product->delete();
+        return redirect()->route('admin.products.index')->with('success', 'Data dihapus');
     }
 
-    public function forceDestroy(Product $product)
-    {
-        DB::beginTransaction();
-        try {
-            DB::statement('SET FOREIGN_KEY_CHECKS=0');
-            DB::table('stock_transactions')->where('product_id', $product->id)->delete();
-            if ($product->image) {
-                Storage::disk('public')->delete($product->image);
-            }
-            $product->delete();
-            DB::statement('SET FOREIGN_KEY_CHECKS=1');
-
-            DB::commit();
-            return redirect()->route('admin.products.index')->with('success', "Produk berhasil dihapus paksa");
-        } catch (\Exception $e) {
-            DB::rollBack();
-            DB::statement('SET FOREIGN_KEY_CHECKS=1');
-            return redirect()->route('admin.products.index')->with('error', 'Gagal hapus paksa');
-        }
-    }
-
-    // Categories Management
+    // ===================================
+    // MANAJEMEN PROGRAM PAKET (CATEGORIES)
+    // ===================================
     public function categoryList(Request $request)
     {
         $query = Category::withCount('products');
@@ -449,18 +266,13 @@ class AdminDashboardController extends Controller
 
     public function categoryStore(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:categories',
-            'description' => 'nullable|string',
-        ]);
-
+        $request->validate(['name' => 'required|string|max:255|unique:categories']);
         Category::create($request->all());
-        return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil ditambahkan');
+        return redirect()->route('admin.categories.index')->with('success', 'Program paket ditambahkan');
     }
 
     public function categoryShow(Category $category)
     {
-        $category->load('products');
         return view('pages.admin.categories.show', compact('category'));
     }
 
@@ -473,26 +285,23 @@ class AdminDashboardController extends Controller
     {
         $request->validate(['name' => 'required|string|max:255|unique:categories,name,'.$category->id]);
         $category->update($request->all());
-        return redirect()->route('admin.categories.index')->with('success', 'Kategori diupdate');
+        return redirect()->route('admin.categories.index')->with('success', 'Program diperbarui');
     }
 
     public function confirmDeleteCategory(Category $category)
     {
-        $category->loadCount('products');
         return view('pages.admin.categories.delete', compact('category'));
     }
 
     public function categoryDestroy(Category $category)
     {
-        if ($category->products()->exists()) {
-            $uncategorized = Category::firstOrCreate(['name' => 'Tidak Berkategori']);
-            $category->products()->update(['category_id' => $uncategorized->id]);
-        }
         $category->delete();
-        return redirect()->route('admin.categories.index')->with('success', 'Kategori dihapus');
+        return redirect()->route('admin.categories.index')->with('success', 'Program dihapus');
     }
 
-    // Suppliers Management
+    // ===================================
+    // MANAJEMEN AGEN/MITRA (SUPPLIERS)
+    // ===================================
     public function supplierList(Request $request)
     {
         $query = Supplier::query()->withCount('products')->latest();
@@ -500,7 +309,7 @@ class AdminDashboardController extends Controller
             $query->where('name', 'like', "%{$request->search}%");
         }
         $suppliers = $query->paginate(10);
-        $totalProductsFromSuppliers = Supplier::withCount('products')->get()->sum('products_count');
+        $totalProductsFromSuppliers = Supplier::count();
         return view('pages.admin.suppliers.index', compact('suppliers', 'totalProductsFromSuppliers'));
     }
 
@@ -513,19 +322,16 @@ class AdminDashboardController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:suppliers',
-            'contact_person' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
-            'email' => 'required|email|max:255|unique:suppliers',
-            'address' => 'nullable|string',
+            'contact_person' => 'required|string',
+            'phone' => 'required|string',
+            'email' => 'required|email|unique:suppliers',
         ]);
-
         Supplier::create($validated);
-        return redirect()->route('admin.suppliers.index')->with('success', 'Mitra berhasil ditambahkan');
+        return redirect()->route('admin.suppliers.index')->with('success', 'Mitra ditambahkan');
     }
 
     public function supplierShow(Supplier $supplier)
     {
-        $supplier->load('products');
         return view('pages.admin.suppliers.show', compact('supplier'));
     }
 
@@ -536,30 +342,24 @@ class AdminDashboardController extends Controller
 
     public function supplierUpdate(Request $request, Supplier $supplier)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:suppliers,name,'.$supplier->id,
-            'email' => 'required|email|unique:suppliers,email,'.$supplier->id,
-        ]);
         $supplier->update($request->all());
         return redirect()->route('admin.suppliers.index')->with('success', 'Data mitra diperbarui');
     }
 
+    public function confirmDeleteSupplier(Supplier $supplier)
+    {
+        return view('pages.admin.suppliers.delete', compact('supplier'));
+    }
+
     public function supplierDestroy(Supplier $supplier)
     {
-        if ($supplier->products()->exists()) {
-            return redirect()->route('admin.suppliers.index')->with('error', 'Mitra memiliki data jamaah');
-        }
         $supplier->delete();
         return redirect()->route('admin.suppliers.index')->with('success', 'Mitra dihapus');
     }
 
-    public function confirmDeleteSupplier(Supplier $supplier)
-    {
-        $supplier->loadCount('products');
-        return view('pages.admin.suppliers.delete', compact('supplier'));
-    }
-
-    // Reports
+    // ===================================
+    // LAPORAN & PROFILE
+    // ===================================
     public function reportStock(Request $request)
     {
         $query = Product::with('category');
@@ -576,17 +376,10 @@ class AdminDashboardController extends Controller
         return view('pages.admin.reports.stock', compact('products', 'categories', 'stockSummary'));
     }
 
-    public function reportTransactions(Request $request)
+    public function reportTransactions()
     {
-        $query = StockTransaction::with(['product', 'user'])->orderBy('created_at', 'desc');
-        $transactions = $query->paginate(20);
+        $transactions = StockTransaction::with(['product', 'user'])->latest()->paginate(20);
         return view('pages.admin.reports.transactions', compact('transactions'));
-    }
-
-    public function reportUsers()
-    {
-        $users = User::all();
-        return view('pages.admin.reports.users', compact('users'));
     }
 
     public function reportSystem()
@@ -601,15 +394,24 @@ class AdminDashboardController extends Controller
         return view('pages.admin.reports.system', compact('systemData'));
     }
 
-    // Excel Export/Import
-    public function export(Request $request)
+    public function profile()
     {
-        return Excel::download(new ProductsExport($request), 'data-jamaah.xlsx');
+        return view('pages.profile.edit', ['user' => Auth::user()]);
     }
 
-    public function exportTemplate()
+    public function updateProfile(Request $request)
     {
-        return Excel::download(new ProductsTemplateExport(), 'template-jamaah.xlsx');
+        $user = Auth::user();
+        $user->update($request->only('name', 'email'));
+        return back()->with('success', 'Profil diperbarui');
+    }
+
+    // ===================================
+    // EXCEL EXPORT / IMPORT
+    // ===================================
+    public function export(Request $request)
+    {
+        return Excel::download(new ProductsExport($request), 'manifest-jamaah.xlsx');
     }
 
     public function import(Request $request)
@@ -619,7 +421,7 @@ class AdminDashboardController extends Controller
             Excel::import(new ProductsImport, $request->file('file'));
             return redirect()->route('admin.products.index')->with('success', 'Data berhasil diimpor');
         } catch (\Exception $e) {
-            return redirect()->route('admin.products.index')->with('error', 'Gagal impor: ' . $e->getMessage());
+            return redirect()->route('admin.products.index')->with('error', 'Gagal impor data');
         }
     }
 }

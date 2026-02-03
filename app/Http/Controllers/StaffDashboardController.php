@@ -2,48 +2,61 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product; // Tambahkan ini
+use App\Models\Product; 
 use App\Models\StockTransaction;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Auth; // Tambahkan ini
-use Illuminate\Support\Facades\Hash; // Tambahkan ini
-use Illuminate\Support\Facades\Storage; // Tambahkan ini
+use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\Hash; 
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class StaffDashboardController extends Controller
 {
     /**
-     * Menampilkan dashboard utama untuk Staff Gudang.
-     * [MODIFIKASI] Dashboard kini diperkaya dengan statistik dan widget.
+     * Menampilkan dashboard utama untuk Staf Registrasi.
+     * Mengambil data antrean pendaftaran (Masuk) dan rencana terbang (Keluar).
      */
     public function index(): View
     {
-        // 1. Ambil TUGAS UTAMA (status 'pending')
-        $incomingTasks = StockTransaction::with('product', 'supplier')
-            ->where('type', 'masuk')
+        // 1. Ambil TUGAS UTAMA (Pendaftaran Jamaah Baru dengan status 'pending')
+        // [FIXED] Menggunakan 'Masuk' (Huruf Kapital) sesuai data di database
+        $incomingTasks = StockTransaction::with(['product', 'supplier'])
+            ->where('type', 'Masuk')
             ->where('status', 'pending')
             ->orderBy('created_at', 'asc')
             ->get();
 
+        // 2. Ambil TUGAS KEBERANGKATAN (Rencana Terbang dengan status 'pending')
+        // [FIXED] Menggunakan 'Keluar' (Huruf Kapital) sesuai data di database
         $outgoingTasks = StockTransaction::with('product')
-            ->where('type', 'keluar')
+            ->where('type', 'Keluar')
             ->where('status', 'pending')
             ->orderBy('created_at', 'asc')
             ->get();
 
-        // 2. [BARU] Ambil data untuk kartu statistik
-        $incomingTodayCount = $incomingTasks->where('created_at', '>=', today())->count();
-        $outgoingTodayCount = $outgoingTasks->where('created_at', '>=', today())->count();
+        // 3. Ambil data statistik untuk kartu atas (Aktivitas Hari Ini)
+        $incomingTodayCount = StockTransaction::where('type', 'Masuk')
+            ->whereDate('created_at', Carbon::today())
+            ->count();
+            
+        $outgoingTodayCount = StockTransaction::where('type', 'Keluar')
+            ->whereDate('created_at', Carbon::today())
+            ->count();
+            
         $totalPendingTasks = $incomingTasks->count() + $outgoingTasks->count();
 
-        // 3. [BARU] Ambil data untuk widget samping (seperti di dashboard lain)
-        $lowStockProducts = Product::all()->filter(function ($product) {
-            return isset($product->min_stock) && $product->current_stock <= $product->min_stock;
-        })->sortBy('current_stock')->take(5);
+        // 4. Ambil data Paket yang kuotanya hampir penuh (Low Stock)
+        $lowStockProducts = Product::whereColumn('current_stock', '<=', 'min_stock')
+            ->where('current_stock', '>', 0)
+            ->orderBy('current_stock', 'asc')
+            ->take(5)
+            ->get();
         
-        $recentTransactions = StockTransaction::with('product', 'user')
-            ->where('status', '!=', 'pending') // Tampilkan yang sudah selesai
-            ->latest('updated_at')
+        // 5. Riwayat manifest yang sudah diproses (Log Selesai)
+        $recentTransactions = StockTransaction::with(['product', 'user'])
+            ->whereIn('status', ['completed', 'dikeluarkan'])
+            ->latest()
             ->limit(5)
             ->get();
 
@@ -60,7 +73,7 @@ class StaffDashboardController extends Controller
     }
 
     /**
-     * [BARU] Menampilkan halaman edit profil untuk user yang sedang login.
+     * Menampilkan halaman edit profil staf.
      */
     public function profile()
     {
@@ -68,7 +81,7 @@ class StaffDashboardController extends Controller
     }
 
     /**
-     * [BARU] Memproses update profil untuk user yang sedang login.
+     * Memproses update profil staf.
      */
     public function updateProfile(Request $request)
     {
@@ -85,6 +98,7 @@ class StaffDashboardController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
 
+        // Proses Upload Foto Profil
         if ($request->hasFile('photo')) {
             if ($user->profile_photo_path) {
                 Storage::disk('public')->delete($user->profile_photo_path);
@@ -93,6 +107,7 @@ class StaffDashboardController extends Controller
             $user->profile_photo_path = $path;
         }
 
+        // Proses Ganti Password
         if ($request->filled('new_password')) {
             if (!Hash::check($request->current_password, $user->password)) {
                 return back()->withErrors(['current_password' => 'Password saat ini tidak cocok.']);
@@ -102,7 +117,6 @@ class StaffDashboardController extends Controller
 
         $user->save();
         
-        // Redirect ke halaman profil yang sama dengan notifikasi sukses
-        return redirect()->route('staff.profile')->with('success', 'Profil berhasil diperbarui.');
+        return redirect()->route('staff.profile')->with('success', 'Profil Anda berhasil diperbarui.');
     }
 }

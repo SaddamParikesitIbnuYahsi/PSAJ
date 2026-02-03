@@ -30,23 +30,21 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
         ];
 
-        // Validasi role jika dikirim (Update untuk Umroh)
+        // Validasi role disesuaikan (Admin, Staf Registrasi, User)
         if ($request->has('role')) {
-            $rules['role'] = 'required|in:Admin,Manajer Operasional,Staf Registrasi';
+            $rules['role'] = 'required|in:Admin,Staf Registrasi,User';
         }
 
         $validated = $request->validate($rules);
 
-        // Default role: Staf Registrasi
+        // Default role untuk pendaftar baru adalah User
         if (!isset($validated['role'])) {
-            $validated['role'] = 'Staf Registrasi';
+            $validated['role'] = 'User';
         }
 
         try {
-            // Buat user
             $user = $this->auth->register($validated);
 
-            // Auto login setelah register
             $loginData = [
                 'email'    => $validated['email'],
                 'password' => $validated['password'],
@@ -56,7 +54,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Registrasi berhasil! Akun Anda telah dibuat.',
+                'message' => 'Registrasi berhasil!',
                 'data' => [
                     'user' => [
                         'id'         => $user->id,
@@ -67,7 +65,6 @@ class AuthController extends Controller
                     ],
                     'access_token' => $token,
                     'token_type'   => 'Bearer',
-                    'expires_in'   => config('jwt.ttl') * 60,
                     'redirect_to'  => $this->getRedirectUrlByRole($user->role),
                 ]
             ], 201);
@@ -75,7 +72,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Registrasi gagal. Silakan coba lagi.',
+                'message' => 'Registrasi gagal.',
                 'error'   => 'REGISTRATION_FAILED',
             ], 500);
         }
@@ -92,10 +89,8 @@ class AuthController extends Controller
             'remember' => 'boolean',
         ]);
 
-        // Ambil user dari database
         $user = User::where('email', $validated['email'])->first();
 
-        // Jika user tidak ditemukan atau password salah
         if (!$user || !Hash::check($validated['password'], $user->password)) {
             return response()->json([
                 'success' => false,
@@ -103,35 +98,25 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Login user
         Auth::login($user, $validated['remember'] ?? false);
-
-        // Regenerate session
         $request->session()->regenerate();
-
-        // Update last login (opsional)
         $user->update(['last_login_at' => now()]);
 
-        // Berhasil login
         return response()->json([
             'success' => true,
-            'message' => 'Login berhasil! Selamat datang, ' . $user->name,
+            'message' => 'Login berhasil!',
             'data' => [
                 'user' => [
                     'id'         => $user->id,
                     'name'       => $user->name,
                     'email'      => $user->email,
                     'role'       => $user->role,
-                    'last_login' => now()->format('Y-m-d H:i:s'),
                 ],
                 'redirect_to' => $this->getRedirectUrlByRole($user->role),
             ]
         ]);
     }
 
-    /**
-     * Alternative simple login method
-     */
     public function simpleLogin(Request $request)
     {
         $validated = $request->validate([
@@ -145,24 +130,19 @@ class AuthController extends Controller
         if (!$user || !Hash::check($validated['password'], $user->password)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Login gagal! Email atau password salah.',
-                'error'   => 'INVALID_CREDENTIALS',
+                'message' => 'Login gagal!',
             ], 401);
         }
 
         Auth::login($user, $validated['remember'] ?? false);
-        $user->update(['last_login_at' => now()]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Login berhasil! Selamat datang, ' . $user->name,
+            'message' => 'Login berhasil!',
             'data' => [
                 'user' => [
-                    'id'         => $user->id,
-                    'name'       => $user->name,
-                    'email'      => $user->email,
-                    'role'       => $user->role,
-                    'last_login' => now()->format('Y-m-d H:i:s'),
+                    'id'    => $user->id,
+                    'role'  => $user->role,
                 ],
                 'redirect_to'  => $this->getRedirectUrlByRole($user->role),
             ]
@@ -170,71 +150,40 @@ class AuthController extends Controller
     }
 
     /**
-     * Get redirect path based on user role (Updated for Umroh)
+     * Redirect Path Berdasarkan Role (PENTING: Harus sinkron dengan web.php)
      */
-    protected function getRedirectUrlByRole($role)
-    {
-        return match ($role) {
-            'Admin'               => '/admin/dashboard',
-            'Manajer Operasional' => '/manajer/dashboard',
-            'Staf Registrasi'     => '/staff/dashboard',
-            default               => '/',
-        };
-    }
+// Cari fungsi ini di AuthController dan ganti isinya:
+protected function getRedirectUrlByRole($role)
+{
+    return match ($role) {
+        'Admin'           => '/admin/dashboard',
+        'Staf Registrasi' => '/staff/dashboard',
+        'User'            => '/user/dashboard',
+        default           => '/',
+    };
+}
 
-    /**
-     * Get current authenticated user info
-     */
     public function me(Request $request)
     {
         $user = Auth::user();
-
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User tidak terautentikasi',
-            ], 401);
-        }
+        if (!$user) return response()->json(['success' => false], 401);
 
         return response()->json([
             'success' => true,
-            'data' => [
-                'user' => [
-                    'id'         => $user->id,
-                    'name'       => $user->name,
-                    'email'      => $user->email,
-                    'role'       => $user->role,
-                    'created_at' => $user->created_at->format('Y-m-d H:i:s'),
-                ]
-            ]
+            'data' => ['user' => $user]
         ]);
     }
 
     public function logout(Request $request)
     {
-        if ($request->expectsJson() || $request->is('api/*')) {
-            if ($request->user()) {
-                $request->user()->currentAccessToken()?->delete();
-            }
-            return response()->json([
-                'success' => true,
-                'message' => 'Logout berhasil.'
-            ]);
-        }
-
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login')->with('status', 'Logout berhasil.');
-    }
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true]);
+        }
 
-    /**
-     * Check if user has specific role
-     */
-    public function checkRole($role)
-    {
-        $user = Auth::user();
-        return $user && $user->role === $role;
+        return redirect('/login');
     }
 }
