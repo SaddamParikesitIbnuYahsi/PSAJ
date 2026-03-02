@@ -104,7 +104,7 @@
         <p class="text-sm text-gray-600">
             Belum punya akun?
             <a href="{{ route('register') }}" class="font-medium text-blue-600 transition-colors duration-200 hover:text-blue-500">
-                Daftar sekarang
+                Daftar kan Lewat Admin
             </a>
         </p>
     </div>

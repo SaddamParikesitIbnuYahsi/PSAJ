@@ -20,9 +20,9 @@ class StockTransaction extends Model
         'status',
         'notes',
     ];
+
     protected $casts = [
-    'date' => 'date',  // This will automatically cast the date field to a Carbon instance
-    // ... your other casts
+        'date' => 'datetime', // Diubah ke datetime agar mendukung jam pendaftaran
     ];
 
     public function product(): BelongsTo
@@ -30,13 +30,13 @@ class StockTransaction extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function supplier(): BelongsTo
-    {
-        return $this->belongsTo(Supplier::class);
-    }
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
     }
 }
