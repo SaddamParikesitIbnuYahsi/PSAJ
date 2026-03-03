@@ -17,10 +17,8 @@ class StaffTaskController extends Controller
      */
     public function listIncoming(Request $request): View
     {
-        // Mengambil data dari Product agar sinkron dengan input Admin
         $query = Product::with(['category', 'supplier']);
 
-        // Filter Pencarian Nama atau SKU
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -29,7 +27,6 @@ class StaffTaskController extends Controller
             });
         }
 
-        // Filter Status Kuota
         if ($request->filled('status') && $request->status !== 'semua') {
             if ($request->status == 'completed') {
                 $query->whereColumn('current_stock', '>', 'min_stock');
@@ -38,20 +35,63 @@ class StaffTaskController extends Controller
             }
         }
 
-        // Kita tetap gunakan nama variabel $transactions agar tidak merusak Blade
         $transactions = $query->latest()->paginate(15);
-
         return view('pages.staff.tasks.list_incoming', compact('transactions'));
     }
 
-    public function showIncomingConfirmationForm(StockTransaction $transaction): View|RedirectResponse
+    /**
+     * Memproses Keberangkatan (Stok Keluar)
+     */
+    public function processOutgoingDispatch(Request $request, StockTransaction $transaction): RedirectResponse
     {
-        if ($transaction->type !== 'masuk' || $transaction->status !== 'pending') {
-            return redirect()->route('staff.dashboard')->with('error', 'Tugas tidak valid atau sudah diproses.');
+        $product = $transaction->product;
+
+        if (!$product) {
+            return redirect()->route('staff.dashboard')->with('error', 'Jamaah tidak ditemukan.');
         }
-        return view('pages.staff.tasks.confirm_incoming', ['task' => $transaction]);
+
+        $request->validate([
+            'quantity_dispatched' => "required|integer|min:1|max:{$product->current_stock}",
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $previousStock = $product->current_stock;
+
+            // 1. Kurangi kuota aktif di Manifest
+            $product->decrement('current_stock', $request->quantity_dispatched);
+
+            // 2. Update status transaksi keberangkatan menjadi Selesai (Terbang)
+            $transaction->update([
+                'status'         => 'completed',
+                'quantity'       => $request->quantity_dispatched,
+                'user_id'        => Auth::id(),
+                'type'           => 'Keluar',
+                'previous_stock' => $previousStock,
+                'current_stock'  => $previousStock - $request->quantity_dispatched,
+                'notes'          => 'Jamaah telah berangkat/terbang.'
+            ]);
+
+            DB::commit();
+            return redirect()->route('staff.stock.outgoing.list')->with('success', 'Jamaah berhasil diberangkatkan dan riwayat diperbarui.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Gagal memproses keberangkatan: ' . $e->getMessage());
+        }
     }
 
+    public function listOutgoing(): View
+    {
+        // Mengambil data rencana keberangkatan (Transaksi type Keluar)
+        $transactions = StockTransaction::with(['product', 'user'])
+            ->where('type', 'Keluar')
+            ->latest()
+            ->paginate(15);
+
+        return view('pages.staff.tasks.list_outgoing', compact('transactions'));
+    }
+
+    // Fungsi konfirmasi masuk (Pendaftaran) tetap dipertahankan
     public function processIncomingConfirmation(Request $request, StockTransaction $transaction): RedirectResponse
     {
         $request->validate([
@@ -74,19 +114,10 @@ class StaffTaskController extends Controller
             ]);
 
             DB::commit();
+            return redirect()->route('staff.stock.incoming.list')->with('success', 'Data berhasil dikonfirmasi.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Gagal memproses.');
         }
-
-        return redirect()->route('staff.stock.incoming.list')->with('success', 'Data dikonfirmasi.');
-    }
-
-    public function listOutgoing(): View
-    {
-        $transactions = Product::where('current_stock', '<=', 0)
-            ->latest()
-            ->paginate(15);
-        return view('pages.staff.tasks.list_outgoing', compact('transactions'));
     }
 }

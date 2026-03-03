@@ -25,6 +25,19 @@
         </div>
     </div>
 
+    <!-- Notifikasi Success/Error -->
+    @if(session('success'))
+        <div class="mb-6 p-4 bg-emerald-50 border-l-4 border-emerald-500 text-emerald-700 rounded-r-xl shadow-sm font-bold flex items-center">
+            <i class="fas fa-check-circle mr-3"></i> {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('warning'))
+        <div class="mb-6 p-4 bg-amber-50 border-l-4 border-amber-500 text-amber-700 rounded-r-xl shadow-sm font-bold flex items-center">
+            <i class="fas fa-exclamation-triangle mr-3"></i> {{ session('warning') }}
+        </div>
+    @endif
+
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 gap-6 mb-8 md:grid-cols-3">
         <div class="p-6 bg-white border border-slate-100 rounded-[2rem] shadow-sm flex items-center gap-5 group transition hover:shadow-md">
@@ -92,7 +105,7 @@
                                         {{ substr($category->name, 0, 1) }}
                                     </div>
                                     <div>
-                                        <div class="text-sm font-black text-slate-800">{{ $category->name }}</div>
+                                        <div class="text-sm font-black text-slate-800 dark:text-white">{{ $category->name }}</div>
                                         <div class="text-[10px] font-bold text-slate-400 italic">ID: #{{ $category->id }}</div>
                                     </div>
                                 </div>
@@ -108,10 +121,22 @@
                                 </span>
                             </td>
                             <td class="px-8 py-5 text-right">
-                                <div class="flex items-center justify-end space-x-1">
-                                    <a href="{{ route('admin.categories.show', $category) }}" class="p-2 text-slate-400 hover:text-emerald-600 transition"><i class="fas fa-eye"></i></a>
-                                    <a href="{{ route('admin.categories.edit', $category) }}" class="p-2 text-slate-400 hover:text-blue-600 transition"><i class="fas fa-edit"></i></a>
-                                    <a href="{{ route('admin.categories.delete', $category) }}" class="p-2 text-slate-400 hover:text-red-600 transition"><i class="fas fa-trash"></i></a>
+                                <div class="flex items-center justify-end gap-1">
+                                    
+                                    {{-- TOMBOL BARU: BERANGKATKAN MASSAL --}}
+                                    @if($category->products_count > 0)
+                                        <form action="{{ route('admin.categories.berangkatkan', $category->id) }}" method="POST" 
+                                              onsubmit="return confirm('Proses keberangkatan massal? Tindakan ini akan mengosongkan manifest aktif paket {{ $category->name }} dan mencatat riwayat pendaftaran keluar.')">
+                                            @csrf
+                                            <button type="submit" class="p-2 text-slate-400 hover:text-amber-500 transition transform hover:scale-110" title="Berangkatkan Massal">
+                                                <i class="fas fa-plane-departure"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+
+                                    <a href="{{ route('admin.categories.show', $category) }}" class="p-2 text-slate-400 hover:text-emerald-600 transition" title="Lihat Detail"><i class="fas fa-eye"></i></a>
+                                    <a href="{{ route('admin.categories.edit', $category) }}" class="p-2 text-slate-400 hover:text-blue-600 transition" title="Edit Paket"><i class="fas fa-edit"></i></a>
+                                    <a href="{{ route('admin.categories.delete', $category) }}" class="p-2 text-slate-400 hover:text-red-600 transition" title="Hapus"><i class="fas fa-trash"></i></a>
                                 </div>
                             </td>
                         </tr>

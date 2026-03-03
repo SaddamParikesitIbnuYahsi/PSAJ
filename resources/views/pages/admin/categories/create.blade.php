@@ -62,6 +62,16 @@
                                 [Deskripsi akan muncul di sini]
                             </div>
                         </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div class="space-y-2">
+                     <label class="text-xs font-black uppercase text-slate-500">Tanggal Keberangkatan</label>
+                 <input type="date" name="departure_date" class="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-emerald-500 font-bold" required>
+             </div>
+             <div class="space-y-2">
+                 <label class="text-xs font-black uppercase text-slate-500">Tanggal Kepulangan (Estimasi)</label>
+                <input type="date" name="return_date" class="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-emerald-500 font-bold" required>
+             </div>
+        </div>
                         <div class="ml-auto">
                             <span class="px-3 py-1 bg-amber-100 text-amber-700 text-[10px] font-black rounded-full uppercase">
                                 0 Jamaah

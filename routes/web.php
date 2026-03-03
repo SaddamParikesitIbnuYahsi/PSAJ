@@ -54,10 +54,12 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     
+    
     // --- USER MANAGEMENT ---
     Route::get('/users', [AdminDashboardController::class, 'userList'])->name('users.index');
     Route::get('/users/create', [AdminDashboardController::class, 'userCreate'])->name('users.create');
     Route::post('/users', [AdminDashboardController::class, 'userStore'])->name('users.store');
+    // ... (sisanya tetap sama)
     Route::get('/users/{user}', [AdminDashboardController::class, 'userShow'])->name('users.show');
     Route::get('/users/{user}/edit', [AdminDashboardController::class, 'userEdit'])->name('users.edit');
     Route::put('/users/{user}', [AdminDashboardController::class, 'userUpdate'])->name('users.update');
@@ -83,6 +85,9 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/categories/{category}', [AdminDashboardController::class, 'categoryUpdate'])->name('categories.update');
     Route::get('/categories/{category}/delete', [AdminDashboardController::class, 'confirmDeleteCategory'])->name('categories.delete');
     Route::delete('/categories/{category}', [AdminDashboardController::class, 'categoryDestroy'])->name('categories.destroy');
+    
+    // ROUTE BARU: PROSES KEBERANGKATAN MASSAL
+    Route::post('/categories/{category}/berangkatkan', [AdminDashboardController::class, 'berangkatkanPaket'])->name('categories.berangkatkan');
 
     // --- AGEN & MITRA (SUPPLIERS) ---
     Route::get('/suppliers', [AdminDashboardController::class, 'supplierList'])->name('suppliers.index');
@@ -129,6 +134,10 @@ Route::middleware(['auth', 'role:Staf Registrasi'])->prefix('staff')->name('staf
     });
     Route::get('/reports/incoming', [StaffReportController::class, 'showIncomingReport'])->name('reports.incoming');
     Route::get('/reports/outgoing', [StaffReportController::class, 'showOutgoingReport'])->name('reports.outgoing');
+    
+    // ROUTE BARU: EXPORT EXCEL STAFF
+    Route::get('/reports/incoming/export', [StaffReportController::class, 'export'])->name('reports.export');
+    
     Route::get('/profile', [StaffDashboardController::class, 'profile'])->name('profile');
     Route::put('/profile', [StaffDashboardController::class, 'updateProfile'])->name('profile.update');
 });
