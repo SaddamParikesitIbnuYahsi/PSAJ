@@ -1,16 +1,26 @@
-# 📦 Stockify - Aplikasi Stok Gudang
+# 🕋 PSAJ – Sistem Manajemen Umroh
 
-> **Aplikasi untuk mengelola barang di gudang dengan mudah!** 🚀
+> **Portal internal untuk mengelola jamaah, paket umroh, mitra, dan laporan operasional biro.**
 
-Stockify adalah aplikasi web untuk mengelola stok barang di gudang. Cocok untuk toko, warehouse, atau bisnis yang perlu mencatat barang masuk dan keluar.
+Aplikasi ini awalnya berbasis sistem stok gudang, lalu dimodifikasi penuh menjadi **sistem manajemen biro umroh**:
 
-## ✨ Kenapa Pilih Stockify?
+- Admin mengelola **manifest jamaah, program paket, mitra/agen, laporan pusat dan export manifest**.
+- Staf Registrasi mengelola **pendaftaran & keberangkatan jamaah** dan bisa **mencetak laporan**.
+- User (role `User`) memiliki **dashboard ringkas** untuk melihat paket, riwayat, dan profil.
 
--   🔐 **Aman** - Ada sistem login untuk melindungi data
--   📱 **Mudah Digunakan** - Tampilan yang simpel dan mudah dipahami
--   💾 **Data Tersimpan** - Semua data barang tersimpan dengan aman
--   📊 **Laporan Lengkap** - Bisa lihat stok barang kapan saja
--   🔍 **Pencarian Cepat** - Mudah cari barang yang diinginkan
+## ✨ Fitur Utama
+
+- **Landing page umroh** untuk promosi paket, fasilitas, testimoni, dan CTA konsultasi/WhatsApp.
+- **Role-based access**:
+  - Admin: manajemen staf, jamaah, paket, mitra, laporan pusat.
+  - Staf Registrasi: tugas pendaftaran & keberangkatan, laporan incoming/outgoing + export.
+  - User: melihat paket, riwayat, dan kelola profil.
+- **Manifest Jamaah**: data jamaah terhubung dengan paket (kategori) dan mitra (supplier), plus riwayat transaksi.
+- **Program Paket Umroh**: paket Ekonomis, VIP, Keluarga, Ramadhan, Plus Turki (via seeder).
+- **Mitra & Agen**: direktori agen/cabang dengan statistik jamaah.
+- **Laporan & Export**:
+  - Admin: laporan kuota seat per paket + filter program/status.
+  - Staff: laporan jamaah masuk & keberangkatan, export Excel manifest dan keberangkatan.
 
 ---
 
@@ -18,9 +28,11 @@ Stockify adalah aplikasi web untuk mengelola stok barang di gudang. Cocok untuk 
 
 | Teknologi        | Fungsi                  |
 | ---------------- | ----------------------- |
-| **Laravel**      | Sistem utama aplikasi   |
-| **MySQL**        | Tempat menyimpan data   |
-| **Tailwind CSS** | Membuat tampilan cantik |
+| **Laravel**      | Backend & routing       |
+| **MySQL**        | Basis data utama        |
+| **Blade + Tailwind CSS** | Tampilan dashboard & landing page |
+| **Alpine.js**    | Interaksi ringan di UI  |
+| **Maatwebsite/Excel** | Export & import Excel (manifest, laporan) |
 
 ---
 
@@ -37,11 +49,11 @@ Pastikan komputer sudah ada:
 
 ### Langkah Install
 
-**1. Download aplikasi**
+**1. Clone repository**
 
 ```bash
-git clone https://github.com/GeishaMagangJogja/StockifyApp.git
-cd StockifyApp
+git clone <url-repo-ini>.git
+cd PSAJ
 ```
 
 **2. Install komponen Laravel**
@@ -64,7 +76,7 @@ Buka file `.env` dan isi:
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=stockify
+DB_DATABASE=umroh
 DB_USERNAME=root
 DB_PASSWORD=
 ```
@@ -85,82 +97,55 @@ Buka browser ke: http://127.0.0.1:8000 🎉
 
 ---
 
-## 📁 Struktur Folder
+## 📁 Struktur Folder (Ringkas)
 
 ```
-stockify-backend/
+PSAJ/
 ├── app/
-│   ├── Http/Controllers/     # Pengendali halaman
-│   ├── Models/              # Model data
-│   └── Services/           # Logika bisnis
+│   ├── Http/Controllers/     # Controller web & API
+│   ├── Models/               # User, Product (Jamaah), Category (Paket), Supplier (Mitra), StockTransaction
+│   └── Services/             # Logika bisnis tambahan (jika ada)
 ├── database/
-│   ├── migrations/         # Struktur tabel
-│   └── seeders/           # Data awal
+│   ├── migrations/           # Struktur tabel
+│   └── seeders/              # Data awal (paket, mitra, jamaah contoh, user)
 ├── routes/
-│   └── api.php            # Alamat halaman
+│   ├── web.php               # Route web (landing + dashboard admin/staff/user)
+│   └── api.php               # API internal (auth, produk, stok)
 └── resources/
-    └── css/              # File tampilan
+    ├── views/                # Blade view (landing, dashboard, laporan, dsb.)
+    └── css/, js/             # Asset frontend (Tailwind, Alpine, dll.)
 ```
 
 ---
 
-## 🔗 Alamat Halaman (API)
+## 🔗 URL & Endpoint Penting
 
-### Login & Daftar
+### Web (UI)
 
-| Cara | Alamat               | Fungsi            |
-| ---- | -------------------- | ----------------- |
-| POST | `/api/auth/register` | Daftar akun baru  |
-| POST | `/api/auth/login`    | Masuk ke aplikasi |
+- `/` – Landing page biro umroh.
+- `/login` – Halaman login.
+- `/admin/dashboard` – Dashboard Admin.
+- `/staff/dashboard` – Dashboard Staf Registrasi.
+- `/user/dashboard` – Dashboard User.
 
-### Kelola Barang
+### API (contoh)
 
-| Cara   | Alamat               | Fungsi              |
-| ------ | -------------------- | ------------------- |
-| GET    | `/api/products`      | Lihat semua barang  |
-| POST   | `/api/products`      | Tambah barang baru  |
-| GET    | `/api/products/{id}` | Lihat detail barang |
-| PUT    | `/api/products/{id}` | Edit barang         |
-| DELETE | `/api/products/{id}` | Hapus barang        |
+- **Auth**
+  - `POST /api/auth/register` – Registrasi user (default role: `User`).
+  - `POST /api/auth/login` – Login.
+  - `GET /api/profile` – Profil user login.
 
-### Kelola Kategori
-
-| Cara   | Alamat                 | Fungsi          |
-| ------ | ---------------------- | --------------- |
-| GET    | `/api/categories`      | Lihat kategori  |
-| POST   | `/api/categories`      | Tambah kategori |
-| PUT    | `/api/categories/{id}` | Edit kategori   |
-| DELETE | `/api/categories/{id}` | Hapus kategori  |
-
-### Profile Pengguna
-
-| Cara | Alamat         | Fungsi        |
-| ---- | -------------- | ------------- |
-| GET  | `/api/profile` | Lihat profile |
+- **Master data** (prefix `/api/admin` dengan middleware role Admin)
+  - `GET /api/admin/products` – Daftar jamaah.
+  - `GET /api/admin/categories` – Daftar program paket.
+  - `GET /api/admin/suppliers` – Daftar mitra/agen.
 
 ---
 
 ## 🔐 Sistem Keamanan
 
-Stockify menggunakan sistem token untuk keamanan.
-
-### Cara menggunakan:
-
-1. **Login** dulu untuk dapat token
-2. **Masukkan token** di setiap request
-
-### Contoh:
-
-```bash
-# Login dulu
-curl -X POST http://localhost:8000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"user@example.com","password":"password"}'
-
-# Akses data barang (pakai token)
-curl -X GET http://localhost:8000/api/products \
-  -H "Authorization: Bearer token-yang-didapat"
-```
+Autentikasi menggunakan **Laravel Sanctum** + session untuk web.  
+Untuk client non-browser, gunakan token Bearer yang didapat dari endpoint login API.
 
 ---
 
@@ -198,7 +183,7 @@ APP_URL=https://website-kamu.com
 
 # Database server
 DB_HOST=alamat-database-server
-DB_DATABASE=stockify_production
+DB_DATABASE=psaj_umroh_production
 ```
 
 ---
@@ -207,13 +192,45 @@ DB_DATABASE=stockify_production
 
 Mau bantu develop? Silakan!
 
-### Caranya:
+### Alur kontribusi
 
-1. **Fork** repository ini
-2. **Buat branch** baru: `git checkout -b fitur-baru`
-3. **Commit** perubahan: `git commit -m "tambah fitur baru"`
-4. **Push**: `git push origin fitur-baru`
-5. **Buat Pull Request**
+1. **Fork** repository ini ke akun GitHub kamu.
+2. **Clone** fork ke lokal:
+   ```bash
+   git clone <url-fork-kamu>.git
+   cd PSAJ
+   ```
+3. **Buat branch** baru yang deskriptif:
+   ```bash
+   git checkout -b feat/nama-fitur
+   # atau
+   git checkout -b fix/nama-bug
+   ```
+4. Setup environment & jalankan:
+   ```bash
+   composer install
+   cp .env.example .env
+   php artisan key:generate
+   # sesuaikan DB_* di .env
+   php artisan migrate:fresh --seed
+   php artisan serve
+   ```
+5. Lakukan perubahan kode dengan tetap mengikuti:
+   - Penamaan role: `Admin`, `Staf Registrasi`, `User`.
+   - Struktur route (group prefix `admin/`, `staff/`, `user/`).
+   - Tema UI (Tailwind dengan nuansa emerald/dark mode).
+6. Jalankan test (kalau ada):
+   ```bash
+   php artisan test
+   ```
+7. Commit dengan pesan jelas:
+   ```bash
+   git commit -m "feat: tambah export laporan keberangkatan staff"
+   ```
+8. Push ke fork dan buat **Pull Request** ke repo utama. Jelaskan:
+   - Ringkasan perubahan.
+   - Langkah cara mengetes.
+   - Screenshot (kalau ada perubahan UI).
 
 ---
 
@@ -222,8 +239,8 @@ Mau bantu develop? Silakan!
 ### Command berguna:
 
 ```bash
-# Buat model baru dengan controller
-php artisan make:model NamaBarang -mcr
+# Buat model baru dengan controller resource + migration
+php artisan make:model NamaModel -mcr
 
 # Hapus semua cache
 php artisan optimize:clear

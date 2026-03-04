@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product; // Ubah ke model Product
-use App\Models\Category;
 use Illuminate\Contracts\View\View;
 use Carbon\Carbon;
+use App\Exports\ManifestExport;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Models\StockTransaction;
+use App\Exports\DepartureExport;
 
 class StaffReportController extends Controller
 {
@@ -63,15 +66,75 @@ class StaffReportController extends Controller
 
     public function showOutgoingReport(): View
     {
-        // Tetap menggunakan transaksi jika ini khusus untuk riwayat keluar/masuk barang/stok
-        // Namun untuk manifest jamaah, sebaiknya diarahkan ke data Product
-        $transactions = Product::where('current_stock', '<=', 0) // Contoh: Jamaah yang kuotanya sudah penuh
-            ->latest()
+        $transactions = StockTransaction::with(['product', 'user', 'supplier'])
+            ->where('type', 'Keluar')
+            ->latest('date')
             ->paginate(10);
 
         return view('pages.staff.reports.outgoing_report', [
             'transactions' => $transactions,
             'reportTitle' => 'Riwayat Keberangkatan'
         ]);
+    }
+
+    /**
+     * Export manifest jamaah (laporan incoming) ke Excel untuk Staff.
+     */
+    public function export(Request $request)
+    {
+        $query = Product::with(['category', 'supplier']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('sku', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        }
+
+        $fileName = 'manifest-jamaah-staff-' . now()->format('Ymd-His') . '.xlsx';
+
+        return Excel::download(new ManifestExport($query), $fileName);
+    }
+
+    /**
+     * Export laporan keberangkatan (riwayat stock transaction Keluar) ke Excel.
+     */
+    public function exportDepartures(Request $request)
+    {
+        $query = StockTransaction::with(['product.category', 'supplier', 'user'])
+            ->where('type', 'Keluar');
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('date', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('date', '<=', $request->end_date);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('product', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('sku', 'like', "%{$search}%");
+            });
+        }
+
+        $fileName = 'laporan-keberangkatan-staff-' . now()->format('Ymd-His') . '.xlsx';
+
+        return Excel::download(new DepartureExport($query), $fileName);
     }
 }

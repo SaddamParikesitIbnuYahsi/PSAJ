@@ -71,7 +71,15 @@
                             <p class="text-sm text-gray-500 truncate dark:text-gray-400">{{ auth()->user()->email }}</p>
                         </div>
                         <div class="py-1">
-                            <a href="{{ match(Auth::user()->role) { 'Admin' => route('admin.profile'), 'Manajer Gudang' => route('manajergudang.profile'), 'Staff Gudang' => route('staff.profile'), default => '#' } }}" class="block w-full px-4 py-2 text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-slate-700/50">Profil Saya</a>
+                            <a href="{{ match(Auth::user()->role) {
+                                            'Admin' => route('admin.profile'),
+                                            'User' => route('manajergudang.profile'),
+                                            'Staf Registrasi' => route('staff.profile'),
+                                            default => '#',
+                                        } }}"
+                               class="block w-full px-4 py-2 text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-slate-700/50">
+                                Profil Saya
+                            </a>
                         </div>
                         <div class="py-1">
                             <form action="{{ route('logout') }}" method="POST">

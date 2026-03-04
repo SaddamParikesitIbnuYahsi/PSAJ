@@ -39,9 +39,10 @@
                     <button onclick="window.location.reload()" class="flex items-center px-4 py-2.5 text-white text-sm font-bold transition-all bg-white/10 rounded-xl backdrop-blur-md border border-white/20 hover:bg-white/20">
                         <i class="mr-2 fas fa-sync-alt"></i> Segarkan Data
                     </button>
-                    <button class="flex items-center px-5 py-2.5 text-emerald-900 text-sm font-bold bg-amber-400 rounded-xl shadow-lg hover:bg-amber-300">
-                        <i class="mr-2 fas fa-print"></i> Cetak Manifest
-                    </button>
+                    <a href="{{ route('staff.reports.export', request()->query()) }}"
+                       class="flex items-center px-5 py-2.5 text-emerald-900 text-sm font-bold bg-amber-400 rounded-xl shadow-lg hover:bg-amber-300">
+                        <i class="mr-2 fas fa-file-excel"></i> Cetak Manifest
+                    </a>
                 </div>
             </div>
         </div>

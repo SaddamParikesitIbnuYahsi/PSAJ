@@ -137,6 +137,7 @@ Route::middleware(['auth', 'role:Staf Registrasi'])->prefix('staff')->name('staf
     
     // ROUTE BARU: EXPORT EXCEL STAFF
     Route::get('/reports/incoming/export', [StaffReportController::class, 'export'])->name('reports.export');
+    Route::get('/reports/outgoing/export', [StaffReportController::class, 'exportDepartures'])->name('reports.departures.export');
     
     Route::get('/profile', [StaffDashboardController::class, 'profile'])->name('profile');
     Route::put('/profile', [StaffDashboardController::class, 'updateProfile'])->name('profile.update');

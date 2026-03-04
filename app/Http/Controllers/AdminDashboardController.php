@@ -392,17 +392,53 @@ class AdminDashboardController extends Controller
     // ===================================
     public function reportStock(Request $request)
     {
+        // Query utama untuk tabel
         $query = Product::with('category');
-        if ($request->filled('category_id')) $query->where('category_id', $request->category_id);
-        
-        $stockSummary = [
-            'safe' => Product::whereColumn('current_stock', '>', 'min_stock')->count(),
-            'low' => Product::where('current_stock', '>', 0)->whereColumn('current_stock', '<=', 'min_stock')->count(),
-            'out' => Product::where('current_stock', '<=', 0)->count(),
-        ];
+
+        // Filter program (kategori)
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        // Filter status kuota
+        if ($request->filled('stock_status')) {
+            switch ($request->stock_status) {
+                case 'low':
+                    $query->where('current_stock', '>', 0)
+                          ->whereColumn('current_stock', '<=', 'min_stock');
+                    break;
+                case 'out':
+                    $query->where('current_stock', '<=', 0);
+                    break;
+                case 'safe':
+                    $query->whereColumn('current_stock', '>', 'min_stock');
+                    break;
+            }
+        }
 
         $products = $query->paginate(20);
+
+        // Summary kartu atas (dihitung ulang, mengikuti filter program saja)
+        $summaryBase = Product::query();
+        if ($request->filled('category_id')) {
+            $summaryBase->where('category_id', $request->category_id);
+        }
+
+        $stockSummary = [
+            'safe' => (clone $summaryBase)
+                ->whereColumn('current_stock', '>', 'min_stock')
+                ->count(),
+            'low' => (clone $summaryBase)
+                ->where('current_stock', '>', 0)
+                ->whereColumn('current_stock', '<=', 'min_stock')
+                ->count(),
+            'out' => (clone $summaryBase)
+                ->where('current_stock', '<=', 0)
+                ->count(),
+        ];
+
         $categories = Category::all();
+
         return view('pages.admin.reports.stock', compact('products', 'categories', 'stockSummary'));
     }
 
@@ -426,13 +462,44 @@ class AdminDashboardController extends Controller
         return view('pages.admin.reports.system', compact('systemData'));
     }
 
-    public function profile() { return view('pages.profile.edit', ['user' => Auth::user()]); }
+    public function profile()
+    {
+        return view('pages.profile.edit', ['user' => Auth::user()]);
+    }
 
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
-        $user->update($request->only('name', 'email'));
-        return back()->with('success', 'Profil diperbarui');
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'current_password' => 'nullable|required_with:new_password',
+            'new_password' => 'nullable|min:8|confirmed',
+        ]);
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        if ($request->hasFile('photo')) {
+            if ($user->profile_photo_path) {
+                Storage::disk('public')->delete($user->profile_photo_path);
+            }
+            $path = $request->file('photo')->store('profile-photos', 'public');
+            $user->profile_photo_path = $path;
+        }
+
+        if ($request->filled('new_password')) {
+            if (!Hash::check($request->current_password, $user->password)) {
+                return back()->withErrors(['current_password' => 'Password saat ini tidak cocok.']);
+            }
+            $user->password = Hash::make($request->new_password);
+        }
+
+        $user->save();
+
+        return redirect()->route('admin.profile')->with('success', 'Profil berhasil diperbarui.');
     }
 
     public function export(Request $request) { return Excel::download(new ProductsExport($request), 'manifest-jamaah.xlsx'); }

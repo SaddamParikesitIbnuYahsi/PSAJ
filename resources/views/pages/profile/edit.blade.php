@@ -28,8 +28,9 @@
                 {{-- Kartu Informasi Profil --}}
                 <form action="{{ match(Auth::user()->role) {
                                 'Admin' => route('admin.profile.update'),
-                                'Manajer Gudang' => route('manajergudang.profile.update'),
-                                'Staff Gudang' => route('staff.profile.update'),
+                                'User' => route('manajergudang.profile.update'),
+                                'Staf Registrasi' => route('staff.profile.update'),
+                                default => '#',
                                } }}" 
                       method="POST" 
                       enctype="multipart/form-data">

@@ -46,23 +46,16 @@
                         <i class="mr-2 fas fa-sync-alt" id="refresh-icon"></i>
                         Refresh
                     </button>
-                    <div class="relative">
-                        <button onclick="toggleExportMenu()" 
-                                class="flex items-center px-5 py-2.5 text-emerald-900 text-sm font-bold transition-all bg-amber-400 rounded-xl shadow-lg hover:bg-amber-300">
-                            <i class="mr-2 fas fa-print"></i>
-                            Export Data
-                            <i class="ml-2 text-[10px] fas fa-chevron-down"></i>
-                        </button>
-                        <!-- Export Dropdown -->
-                        <div id="export-menu" class="absolute right-0 z-50 hidden w-48 mt-3 bg-white border border-slate-100 rounded-2xl shadow-xl p-2">
-                            <a href="#" onclick="exportToPDF()" class="flex items-center px-4 py-3 text-sm font-semibold text-slate-700 rounded-xl hover:bg-emerald-50 transition">
-                                <i class="mr-3 text-red-500 fas fa-file-pdf"></i> PDF
-                            </a>
-                            <a href="#" onclick="exportToExcel()" class="flex items-center px-4 py-3 text-sm font-semibold text-slate-700 rounded-xl hover:bg-emerald-50 transition">
-                                <i class="mr-3 text-green-600 fas fa-file-excel"></i> Excel
-                            </a>
-                        </div>
-                    </div>
+                    <a href="{{ route('staff.reports.departures.export', [
+                                'search'      => request('search'),
+                                'status'      => request('status'),
+                                'start_date'  => request('start_date'),
+                                'end_date'    => request('end_date'),
+                            ]) }}"
+                       class="flex items-center px-5 py-2.5 text-emerald-900 text-sm font-bold transition-all bg-amber-400 rounded-xl shadow-lg hover:bg-amber-300">
+                        <i class="mr-2 fas fa-file-excel"></i>
+                        Export Excel
+                    </a>
                 </div>
             </div>
         </div>
