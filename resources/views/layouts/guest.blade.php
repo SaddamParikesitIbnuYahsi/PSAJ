@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{{ config('app.description', 'Sistem manajemen inventaris modern') }}">
+    <meta name="description" content="{{ config('app.description', 'Sistem manajemen biro umroh dan pendaftaran jamaah') }}">
 
-    <title>{{ config('app.name', 'Stockify') }} - Sistem Manajemen Inventaris</title>
+    <title>{{ config('app.name') }} - Biro Perjalanan Umroh</title>
 
     <!-- Favicon -->
     <link rel="icon" href="{{ get_favicon_url() }}" type="image/x-icon">
@@ -90,15 +90,15 @@
 
                 <!-- Headline -->
                 <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-                    <span class="block text-gray-900 dark:text-white">Kelola Inventaris dengan</span>
+                    <span class="block text-gray-900 dark:text-white">Wujudkan Impian Umroh</span>
                     <span class="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-400 dark:to-blue-300">
-                        Lebih Mudah & Efisien
+                        Bersama Kami
                     </span>
                 </h1>
 
                 <!-- Description -->
                 <p class="max-w-2xl mx-auto mt-6 text-xl leading-relaxed text-gray-600 dark:text-gray-300">
-                    {{ config('app.appDescription', 'Sistem manajemen inventaris modern yang membantu Anda mengelola stok dengan mudah dan efisien.') }}
+                    {{ config('app.appDescription', 'Sistem manajemen biro umroh untuk pendaftaran jamaah, kuota seat, dan paket perjalanan ibadah.') }}
                 </p>
 
                 <!-- CTA Buttons -->
@@ -124,7 +124,7 @@
                     Solusi Lengkap untuk Bisnis Anda
                 </h2>
                 <p class="mt-4 text-xl text-gray-600 dark:text-gray-300">
-                    Kelola inventaris dengan lebih efisien dan hemat waktu dengan fitur-fitur canggih kami.
+                    Kelola pendaftaran jamaah, paket umroh, dan kuota seat dengan fitur-fitur lengkap.
                 </p>
             </div>
 
@@ -134,11 +134,11 @@
                     <div class="absolute inset-0 transition-opacity duration-300 opacity-0 rounded-xl group-hover:opacity-100 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-700/20 dark:to-gray-800/20"></div>
                     <div class="relative z-10">
                         <div class="flex items-center justify-center mb-6 text-blue-600 bg-blue-100 w-14 h-14 rounded-xl dark:bg-blue-900/50 dark:text-blue-300">
-                            <i class="text-2xl fas fa-boxes"></i>
+                            <i class="text-2xl fas fa-users"></i>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Manajemen Produk</h3>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Data Jamaah & Paket</h3>
                         <p class="mt-4 text-gray-600 dark:text-gray-300">
-                            Kelola produk dengan mudah, termasuk stok, kategori, dan detail lainnya dalam satu platform terpusat.
+                            Kelola data jamaah, program paket, kuota seat, dan mitra/agen dalam satu platform terpusat.
                         </p>
                     </div>
                 </div>
@@ -152,7 +152,7 @@
                         </div>
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Analisis Real-time</h3>
                         <p class="mt-4 text-gray-600 dark:text-gray-300">
-                            Pantau semua aktivitas inventaris dengan laporan dan analisis yang selalu diperbarui secara real-time.
+                            Pantau pendaftaran, keberangkatan, dan kuota seat dengan laporan yang selalu diperbarui secara real-time.
                         </p>
                     </div>
                 </div>
@@ -219,7 +219,7 @@
                         <span class="text-xl font-bold text-white">{{ config('app.name') }}</span>
                     </div>
                     <p class="mt-4 text-sm text-gray-400">
-                        Sistem manajemen inventaris modern yang membantu Anda mengelola stok dengan mudah dan efisien.
+                        Sistem manajemen biro umroh untuk data jamaah, paket, dan kuota seat dengan mudah dan terintegrasi.
                     </p>
                 </div>
             </div>

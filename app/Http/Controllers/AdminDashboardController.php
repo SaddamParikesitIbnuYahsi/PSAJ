@@ -156,9 +156,11 @@ class AdminDashboardController extends Controller
     // ===================================
     public function productList(Request $request)
     {
-        $query = Product::with(['category', 'supplier']);
+        $query = Product::with(['category', 'supplier'])->latest();
         if ($request->filled('search')) {
-            $query->where('name', 'like', "%{$request->search}%")->orWhere('sku', 'like', "%{$request->search}%");
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->search}%")->orWhere('sku', 'like', "%{$request->search}%");
+            });
         }
         $products = $query->paginate(15);
         
@@ -241,7 +243,7 @@ class AdminDashboardController extends Controller
             $data['image'] = $request->file('image')->store('product_images', 'public');
         }
         $product->update($data);
-        return redirect()->route('admin.products.index')->with('success', 'Data diperbarui');
+        return redirect()->route('admin.products.index')->with('success', 'Data jamaah berhasil diperbarui');
     }
 
     public function confirmDeleteProduct(Product $product)
@@ -253,7 +255,7 @@ class AdminDashboardController extends Controller
     {
         if ($product->image) Storage::disk('public')->delete($product->image);
         $product->delete();
-        return redirect()->route('admin.products.index')->with('success', 'Data dihapus');
+        return redirect()->route('admin.products.index')->with('success', 'Data jamaah berhasil dihapus');
     }
 
     // ===================================
@@ -509,9 +511,9 @@ class AdminDashboardController extends Controller
         $request->validate(['file' => 'required|file|mimes:xlsx,xls']);
         try {
             Excel::import(new ProductsImport, $request->file('file'));
-            return redirect()->route('admin.products.index')->with('success', 'Data berhasil diimpor');
+            return redirect()->route('admin.products.index')->with('success', 'Data jamaah berhasil diimpor');
         } catch (\Exception $e) {
-            return redirect()->route('admin.products.index')->with('error', 'Gagal impor data');
+            return redirect()->route('admin.products.index')->with('error', 'Gagal impor data jamaah');
         }
     }
 }

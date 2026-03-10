@@ -1,14 +1,14 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Daftar Produk')
+@section('title', 'Data Jamaah')
 
 @section('content')
 <div class="container mx-auto px-4 sm:px-8">
     <div class="py-8">
         {{-- Header Halaman --}}
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Daftar Produk</h1>
-            <p class="mt-1 text-gray-600 dark:text-gray-400">Lihat semua produk yang terdaftar dalam sistem.</p>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Data Jamaah</h1>
+            <p class="mt-1 text-gray-600 dark:text-gray-400">Lihat semua jamaah yang terdaftar dalam sistem.</p>
         </div>
 
         <div class="bg-white dark:bg-slate-800 rounded-lg shadow overflow-hidden">
@@ -34,9 +34,9 @@
                 <table class="w-full table-auto">
                     <thead class="bg-gray-50 dark:bg-slate-700">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Produk</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Jamaah</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Kategori</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Stok</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Kuota</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
                             <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Aksi</th>
                         </tr>
@@ -44,7 +44,7 @@
                     <tbody class="bg-white dark:bg-slate-800 divide-y dark:divide-slate-700">
                         @forelse($products as $product)
                         <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/50">
-                            {{-- Kolom Produk dengan Avatar --}}
+                            {{-- Kolom Jamaah dengan Avatar --}}
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0 h-10 w-10">
@@ -60,7 +60,7 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">{{ $product->category->name ?? 'N/A' }}</span>
                             </td>
-                            {{-- Kolom Stok --}}
+                            {{-- Kolom Kuota --}}
                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                 <div class="text-gray-900 dark:text-white">{{ number_format($product->current_stock) }} <span class="text-gray-500 dark:text-gray-400 text-xs">{{ $product->unit }}</span></div>
                                 <div class="text-xs text-gray-500 dark:text-gray-400">Min: {{ number_format($product->min_stock) }}</div>
@@ -70,7 +70,7 @@
                                 @if($product->current_stock <= 0)
                                     <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300">Habis</span>
                                 @elseif($product->current_stock <= $product->minimum_stock)
-                                    <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300">Stok Rendah</span>
+                                    <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300">Kuota Menipis</span>
                                 @else
                                     <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">Tersedia</span>
                                 @endif
@@ -87,12 +87,12 @@
                             <td colspan="5" class="px-6 py-12 text-center">
                                 <div class="flex flex-col items-center">
                                     <i class="fas fa-box-open text-4xl text-gray-400 dark:text-gray-500 mb-4"></i>
-                                    <h3 class="mb-2 text-lg font-medium text-gray-900 dark:text-white">Tidak Ada Produk</h3>
+                                    <h3 class="mb-2 text-lg font-medium text-gray-900 dark:text-white">Tidak Ada Jamaah</h3>
                                     <p class="text-sm text-gray-500 dark:text-gray-400">
                                         @if(request('search'))
-                                            Tidak ada produk yang cocok dengan pencarian Anda.
+                                            Tidak ada jamaah yang cocok dengan pencarian Anda.
                                         @else
-                                            Sistem belum memiliki data produk.
+                                            Sistem belum memiliki data jamaah.
                                         @endif
                                     </p>
                                 </div>

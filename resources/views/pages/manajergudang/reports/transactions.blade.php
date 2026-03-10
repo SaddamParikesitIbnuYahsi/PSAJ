@@ -9,7 +9,7 @@
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div>
                 <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Laporan Riwayat Transaksi</h1>
-                <p class="mt-1 text-gray-600 dark:text-gray-400">Lacak semua pergerakan barang di gudang.</p>
+                <p class="mt-1 text-gray-600 dark:text-gray-400">Lacak semua transaksi pendaftaran dan keberangkatan jamaah.</p>
             </div>
         </div>
 
@@ -21,8 +21,8 @@
                     <div class="lg:col-span-1">
                         <select name="type" id="type" class="w-full px-3 py-2 border rounded-lg dark:bg-slate-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">
                             <option value="">Semua Tipe</option>
-                            <option value="Masuk" {{ request('type') == 'Masuk' ? 'selected' : '' }}>Barang Masuk</option>
-                            <option value="Keluar" {{ request('type') == 'Keluar' ? 'selected' : '' }}>Barang Keluar</option>
+                            <option value="Masuk" {{ request('type') == 'Masuk' ? 'selected' : '' }}>Pendaftaran</option>
+                            <option value="Keluar" {{ request('type') == 'Keluar' ? 'selected' : '' }}>Keberangkatan</option>
                         </select>
                     </div>
                     {{-- Filter Tanggal Mulai --}}
@@ -61,10 +61,10 @@
                             {{-- Kolom Detail Produk --}}
                             <td class="px-6 py-4">
                                 <div class="flex items-center">
-                                    <img class="object-cover w-10 h-10 mr-4 rounded-lg" src="{{ $transaction->product->image ? asset('storage/' . $transaction->product->image) : 'https://ui-avatars.com/api/?name='.urlencode($transaction->product->name ?? 'P').'&background=random' }}" alt="{{ $transaction->product->name ?? 'Produk' }}">
+                                    <img class="object-cover w-10 h-10 mr-4 rounded-lg" src="{{ $transaction->product->image ? asset('storage/' . $transaction->product->image) : 'https://ui-avatars.com/api/?name='.urlencode($transaction->product->name ?? 'P').'&background=random' }}" alt="{{ $transaction->product->name ?? 'Jamaah' }}">
                                     <div>
-                                        <p class="font-medium text-gray-900 dark:text-white">{{ $transaction->product->name ?? 'Produk Telah Dihapus' }}</p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">Supplier: {{ $transaction->supplier->name ?? '-' }}</p>
+                                        <p class="font-medium text-gray-900 dark:text-white">{{ $transaction->product->name ?? 'Data Jamaah Dihapus' }}</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Mitra/Agen: {{ $transaction->supplier->name ?? '-' }}</p>
                                     </div>
                                 </div>
                             </td>
@@ -72,9 +72,9 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div>
                                     @if($transaction->type == 'Masuk')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Barang Masuk</span>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Pendaftaran</span>
                                     @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Barang Keluar</span>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Keberangkatan</span>
                                     @endif
                                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ \Carbon\Carbon::parse($transaction->date)->format('d M Y') }} oleh {{ $transaction->user->name ?? 'Sistem' }}</p>
                                 </div>

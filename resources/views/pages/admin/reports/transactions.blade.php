@@ -110,7 +110,7 @@
                                     <i class="fas fa-kaaba text-[10px]"></i>
                                 </div>
                                 <div>
-                                    <div class="text-sm font-black text-slate-800 dark:text-white">{{ $trx->product->name ?? 'Produk Dihapus' }}</div>
+                                    <div class="text-sm font-black text-slate-800 dark:text-white">{{ $trx->product->name ?? 'Data Jamaah Dihapus' }}</div>
                                     <div class="text-[10px] font-bold text-slate-400 uppercase">{{ optional($trx->product->category)->name ?? 'Tanpa Kategori' }}</div>
                                 </div>
                             </div>

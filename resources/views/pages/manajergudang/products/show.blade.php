@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Detail Produk: ' . $product->name)
+@section('title', 'Detail Jamaah: ' . $product->name)
 
 @section('content')
     <!-- Header Section -->
@@ -17,36 +17,36 @@
                 <li>
                     <div class="flex items-center">
                         <svg class="w-3 h-3 mx-1 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/></svg>
-                        <a href="{{ route('manajergudang.products.index') }}" class="ml-1 text-sm font-medium text-gray-700 transition-colors hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">Produk</a>
+                        <a href="{{ route('manajergudang.products.index') }}" class="ml-1 text-sm font-medium text-gray-700 transition-colors hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">Data Jamaah</a>
                     </div>
                 </li>
                 <li aria-current="page">
                     <div class="flex items-center">
                         <svg class="w-3 h-3 mx-1 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/></svg>
-                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">Detail Produk</span>
+                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">Detail Jamaah</span>
                     </div>
                 </li>
             </ol>
         </nav>
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Detail Produk: {{ $product->name }}</h1>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Detail Jamaah: {{ $product->name }}</h1>
     </div>
 
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <!-- Kolom Kiri: Informasi dan Riwayat -->
         <div class="space-y-6 lg:col-span-2">
-            <!-- Kartu Informasi Produk -->
+            <!-- Kartu Informasi Jamaah -->
             <div class="overflow-hidden bg-white rounded-lg shadow-md dark:bg-slate-800">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-slate-700">
-                    <h2 class="text-lg font-medium text-gray-900 dark:text-white">Informasi Produk</h2>
+                    <h2 class="text-lg font-medium text-gray-900 dark:text-white">Informasi Jamaah</h2>
                 </div>
                 <div class="p-6">
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Nama Produk</p><p class="mt-1 text-gray-900 dark:text-white">{{ $product->name }}</p></div>
-                        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">SKU</p><p class="mt-1 text-gray-900 dark:text-white">{{ $product->sku }}</p></div>
-                        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Kategori</p><p class="mt-1 text-gray-900 dark:text-white">{{ $product->category->name ?? '-' }}</p></div>
-                        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Supplier</p><p class="mt-1 text-gray-900 dark:text-white">{{ $product->supplier->name ?? '-' }}</p></div>
-                        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Harga Beli</p><p class="mt-1 text-gray-900 dark:text-white">Rp {{ number_format($product->purchase_price, 0, ',', '.') }}</p></div>
-                        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Harga Jual</p><p class="mt-1 text-gray-900 dark:text-white">Rp {{ number_format($product->selling_price, 0, ',', '.') }}</p></div>
+                        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Nama Jamaah</p><p class="mt-1 text-gray-900 dark:text-white">{{ $product->name }}</p></div>
+                        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">No. Registrasi / Paspor</p><p class="mt-1 text-gray-900 dark:text-white">{{ $product->sku }}</p></div>
+                        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Program Paket</p><p class="mt-1 text-gray-900 dark:text-white">{{ $product->category->name ?? '-' }}</p></div>
+                        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Mitra / Agen</p><p class="mt-1 text-gray-900 dark:text-white">{{ $product->supplier->name ?? '-' }}</p></div>
+                        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Biaya Pokok (HPP)</p><p class="mt-1 text-gray-900 dark:text-white">Rp {{ number_format($product->purchase_price, 0, ',', '.') }}</p></div>
+                        <div><p class="text-sm font-medium text-gray-500 dark:text-gray-400">Harga Paket</p><p class="mt-1 text-gray-900 dark:text-white">Rp {{ number_format($product->selling_price, 0, ',', '.') }}</p></div>
                     </div>
                     <div class="mt-6">
                         <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Deskripsi</p>
@@ -55,7 +55,7 @@
                 </div>
             </div>
 
-            <!-- Kartu Riwayat Stok Terakhir -->
+            <!-- Kartu Riwayat Transaksi Terakhir -->
             <div class="overflow-hidden bg-white rounded-lg shadow-md dark:bg-slate-800">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-slate-700">
                     <h2 class="text-lg font-medium text-gray-900 dark:text-white">Riwayat Transaksi Terakhir</h2>
@@ -93,9 +93,9 @@
             </div>
         </div>
 
-        <!-- Kolom Kanan: Gambar dan Status Stok -->
+        <!-- Kolom Kanan: Foto dan Status Kuota -->
         <div class="space-y-6">
-            <!-- Kartu Gambar Produk -->
+            <!-- Foto Jamaah -->
             <div class="overflow-hidden bg-white rounded-lg shadow-md dark:bg-slate-800">
                 <div class="p-6">
                     @if($product->image)
@@ -108,9 +108,9 @@
                 </div>
             </div>
 
-            <!-- Kartu Status Stok -->
+            <!-- Kartu Kuota Seat -->
             <div class="p-6 text-center bg-white rounded-lg shadow-md dark:bg-slate-800">
-                <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Stok Saat Ini</h4>
+                <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Kuota Saat Ini</h4>
                 <p class="my-2 text-5xl font-bold 
                     @if($product->stock_status == 'in_stock') text-green-500 
                     @elseif($product->stock_status == 'low_stock') text-yellow-500 
@@ -119,7 +119,7 @@
                 </p>
                 <p class="text-sm text-gray-600 dark:text-gray-300">{{ $product->unit }}</p>
                 <div class="mt-4 text-xs text-gray-500 dark:text-gray-400">
-                    Stok Minimum: {{ number_format($product->min_stock) }} {{ $product->unit }}
+                    Batas Min Kuota: {{ number_format($product->min_stock) }} {{ $product->unit }}
                 </div>
             </div>
 
@@ -128,10 +128,10 @@
                  <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Aksi Cepat</h3>
                  <div class="flex flex-col space-y-3">
                     <a href="{{ route('manajergudang.stock.in') }}?product_id={{ $product->id }}" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white transition-colors bg-green-600 border border-transparent rounded-md shadow-sm hover:bg-green-700">
-                        <i class="mr-2 fas fa-plus"></i> Catat Barang Masuk
+                        <i class="mr-2 fas fa-plus"></i> Pendaftaran (Masuk)
                     </a>
                     <a href="{{ route('manajergudang.stock.out') }}?product_id={{ $product->id }}" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white transition-colors bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700">
-                        <i class="mr-2 fas fa-minus"></i> Catat Barang Keluar
+                        <i class="mr-2 fas fa-minus"></i> Keberangkatan (Keluar)
                     </a>
                  </div>
             </div>

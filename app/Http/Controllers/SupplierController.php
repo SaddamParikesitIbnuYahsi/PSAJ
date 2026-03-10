@@ -60,11 +60,11 @@ class SupplierController extends Controller
             Supplier::create($validated);
 
             return redirect()->route('admin.suppliers.index')
-                ->with('success', 'Supplier berhasil ditambahkan');
+                ->with('success', 'Mitra/Agen berhasil ditambahkan');
 
         } catch (\Exception $e) {
             return back()->withInput()
-                ->with('error', 'Gagal menambahkan supplier: '.$e->getMessage());
+                ->with('error', 'Gagal menambahkan mitra: '.$e->getMessage());
         }
     }
 
@@ -114,11 +114,11 @@ class SupplierController extends Controller
             $supplier->update($validated);
 
             return redirect()->route('admin.suppliers.show', $supplier->id)
-                ->with('success', 'Data supplier berhasil diperbarui');
+                ->with('success', 'Data mitra berhasil diperbarui');
 
         } catch (\Exception $e) {
             return back()->withInput()
-                ->with('error', 'Gagal memperbarui supplier: '.$e->getMessage());
+                ->with('error', 'Gagal memperbarui mitra: '.$e->getMessage());
         }
     }
 
@@ -148,12 +148,12 @@ class SupplierController extends Controller
         DB::commit();
 
         return redirect()->route('admin.suppliers.index')
-            ->with('success', 'Supplier berhasil dihapus permanen');
+            ->with('success', 'Mitra berhasil dihapus permanen');
 
     } catch (\Exception $e) {
         DB::rollBack();
         return redirect()->back()
-            ->with('error', 'Gagal menghapus supplier: ' . $e->getMessage());
+            ->with('error', 'Gagal menghapus mitra: ' . $e->getMessage());
     }
 }
 }

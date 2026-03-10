@@ -140,7 +140,7 @@ class ReportController extends Controller
         // Tentukan jenis laporan yang akan diekspor dari URL.
         // Anda bisa menambahkan parameter 'report_type' di URL export Anda.
         // Contoh: route('reports.export', ['report_type' => 'incoming_goods'])
-        // Untuk sekarang, kita asumsikan ini untuk 'Laporan Barang Masuk'.
+        // Untuk sekarang, kita asumsikan ini untuk 'Laporan Pendaftaran Jamaah'.
         
         $reportType = $request->query('report_type', 'incoming_goods'); // Default ke barang masuk
         $format = $request->query('format', 'excel');
@@ -150,7 +150,7 @@ class ReportController extends Controller
             // Ini membuat controller lebih fleksibel jika nanti ada export lain
             switch ($reportType) {
                 case 'incoming_goods':
-                    $fileName = 'laporan-barang-masuk-' . now()->format('Y-m-d') . '.xlsx';
+                    $fileName = 'laporan-pendaftaran-jamaah-' . now()->format('Y-m-d') . '.xlsx';
                     // Panggil class Export yang sesuai
                     return Excel::download(new IncomingReportExport($request), $fileName);
                 

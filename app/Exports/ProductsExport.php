@@ -36,14 +36,14 @@ class ProductsExport implements FromQuery, WithHeadings, WithMapping, ShouldAuto
     {
         return [
             'SKU',
-            'Nama Produk',
-            'Kategori',
-            'Supplier',
+            'Nama Jamaah / Paket',
+            'Program Paket',
+            'Mitra / Agen',
             'Deskripsi',
             'Harga Beli',
             'Harga Jual',
-            'Stok Saat Ini',
-            'Stok Minimum',
+            'Kuota Seat',
+            'Batas Min Kuota',
             'Satuan'
         ];
     }
