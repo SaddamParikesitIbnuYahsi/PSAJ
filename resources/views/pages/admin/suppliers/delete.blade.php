@@ -17,7 +17,7 @@
             <div class="p-6 bg-red-50/50 rounded-3xl border border-red-100 mb-10 text-left">
                 <p class="text-[10px] font-black text-red-400 uppercase tracking-widest mb-3">Informasi Tambahan:</p>
                 <ul class="space-y-2 text-xs font-bold text-red-700">
-                    <li>• Histori jamaah akan kehilangan link partner (Supplier ID = NULL)</li>
+                    <li>• Histori jamaah akan kehilangan link mitra/agen</li>
                     <li>• Aksi ini permanen dan tidak dapat dipulihkan</li>
                 </ul>
             </div>

@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Daftar Supplier')
+@section('title', 'Daftar Mitra & Agen')
 
 @section('content')
 <div class="container p-4 mx-auto sm:p-8">
@@ -9,8 +9,8 @@
         <div class="mb-8">
             {{-- [DIHAPUS] Tombol kembali tidak lagi ada di sini --}}
             <div>
-                <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Daftar Supplier</h1>
-                <p class="mt-1 text-gray-500 dark:text-gray-400">Lihat semua data supplier yang bekerja sama dengan perusahaan.</p>
+                <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Daftar Mitra & Agen</h1>
+                <p class="mt-1 text-gray-500 dark:text-gray-400">Lihat semua mitra dan agen cabang yang bekerja sama.</p>
             </div>
         </div>
 
@@ -22,7 +22,7 @@
                     <div class="flex flex-col gap-4 md:flex-row">
                         <div class="relative flex-1">
                             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><i class="text-gray-400 fas fa-search"></i></div>
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, email, atau kontak person supplier..." class="w-full py-2 pl-10 pr-4 border rounded-lg dark:bg-slate-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, email, atau PIC mitra/agen..." class="w-full py-2 pl-10 pr-4 border rounded-lg dark:bg-slate-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div class="flex items-center gap-2">
                              <button type="submit" class="flex items-center justify-center w-full px-4 py-2 text-white bg-blue-600 rounded-lg md:w-auto hover:bg-blue-700"><i class="mr-2 fas fa-filter"></i>Cari</button>
@@ -38,9 +38,9 @@
                 <table class="w-full table-auto">
                     <thead class="bg-gray-50 dark:bg-slate-700/50">
                         <tr>
-                            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"><i class="mr-2 fas fa-truck"></i>Supplier</th>
+                            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"><i class="mr-2 fas fa-handshake"></i>Mitra / Agen</th>
                             <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"><i class="mr-2 fas fa-address-card"></i>Contact Person</th>
-                            <th class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase dark:text-gray-400"><i class="mr-2 fas fa-boxes"></i>Total Produk</th>
+                            <th class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase dark:text-gray-400"><i class="mr-2 fas fa-users"></i>Jamaah</th>
                             <th class="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase dark:text-gray-400"><i class="mr-2 fas fa-eye"></i>Aksi</th>
                         </tr>
                     </thead>
@@ -62,7 +62,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-center whitespace-nowrap">
                                     <span class="inline-flex px-2 py-1 text-xs font-semibold leading-5 text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900/50 dark:text-blue-300">
-                                        {{ $supplier->products_count }} Produk
+                                        {{ $supplier->products_count }} Jamaah
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm font-medium text-center whitespace-nowrap">
@@ -72,7 +72,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="4" class="px-6 py-16 text-center text-gray-500 dark:text-gray-400"><div class="flex flex-col items-center"><i class="mb-4 text-5xl fas fa-truck-loading opacity-50"></i><p>Tidak ada data supplier ditemukan.</p></div></td></tr>
+                            <tr><td colspan="4" class="px-6 py-16 text-center text-gray-500 dark:text-gray-400"><div class="flex flex-col items-center"><i class="mb-4 text-5xl fas fa-truck-loading opacity-50"></i><p>Tidak ada data mitra/agen ditemukan.</p></div></td></tr>
                         @endforelse
                     </tbody>
                 </table>

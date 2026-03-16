@@ -1,18 +1,18 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Edit Supplier: ' . $supplier->name)
+@section('title', 'Edit Mitra: ' . $supplier->name)
 
 @section('content')
 <div class="mb-6">
     <div class="flex items-center mb-2 space-x-2 text-sm text-gray-600 dark:text-gray-400">
         <a href="{{ route('admin.dashboard') }}" class="hover:text-blue-600">Dashboard</a>
         <span>/</span>
-        <a href="{{ route('admin.suppliers.index') }}" class="hover:text-blue-600">Supplier</a>
+        <a href="{{ route('admin.suppliers.index') }}" class="hover:text-blue-600">Mitra & Agen</a>
         <span>/</span>
         <span>Edit</span>
     </div>
     <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Edit Supplier</h1>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Edit Data Mitra / Agen</h1>
         <a href="{{ route('admin.suppliers.show', $supplier->id) }}" class="px-4 py-2 text-sm font-medium text-gray-700 transition duration-150 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:bg-gray-600">
             <i class="mr-2 fas fa-arrow-left"></i> Kembali
         </a>
@@ -36,10 +36,10 @@
             @endif
 
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <!-- Nama Supplier -->
+                <!-- Nama Mitra / Agen -->
                 <div class="space-y-2">
                     <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Nama Supplier <span class="text-red-500">*</span>
+                        Nama Agen / Perusahaan <span class="text-red-500">*</span>
                     </label>
                     <input type="text" id="name" name="name" value="{{ old('name', $supplier->name) }}"
                            class="block w-full px-4 py-2 mt-1 text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
@@ -52,7 +52,7 @@
                 <!-- Contact Person -->
                 <div class="space-y-2">
                     <label for="contact_person" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Contact Person <span class="text-red-500">*</span>
+                        Penanggung Jawab (PIC) <span class="text-red-500">*</span>
                     </label>
                     <input type="text" id="contact_person" name="contact_person" value="{{ old('contact_person', $supplier->contact_person) }}"
                            class="block w-full px-4 py-2 mt-1 text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"

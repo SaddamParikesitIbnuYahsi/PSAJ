@@ -1,20 +1,20 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Konfirmasi Hapus Produk')
+@section('title', 'Konfirmasi Hapus Data Jamaah')
 
 @section('content')
     <div class="mb-6">
         <div class="flex items-center mb-2 space-x-2 text-sm text-gray-600 dark:text-gray-400">
             <a href="{{ route('admin.dashboard') }}" class="hover:text-blue-600">Dashboard</a>
             <span>/</span>
-            <a href="{{ route('admin.products.index') }}" class="hover:text-blue-600">Produk</a>
+            <a href="{{ route('admin.products.index') }}" class="hover:text-blue-600">Manifest Jamaah</a>
             <span>/</span>
             <span>Konfirmasi Hapus</span>
         </div>
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Konfirmasi Hapus Produk</h1>
-                <p class="text-gray-600 dark:text-gray-400">Anda akan menghapus produk ini secara permanen</p>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Konfirmasi Hapus Data Jamaah</h1>
+                <p class="text-gray-600 dark:text-gray-400">Anda akan menghapus data jamaah ini secara permanen</p>
             </div>
         </div>
     </div>
@@ -69,8 +69,8 @@
                     <div class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                         <p><span class="font-medium">SKU:</span> {{ $product->sku }}</p>
                         <p><span class="font-medium">Kategori:</span> {{ $product->category->name ?? '-' }}</p>
-                        <p><span class="font-medium">Supplier:</span> {{ $product->supplier->name ?? '-' }}</p>
-                        <p><span class="font-medium">Stok:</span> {{ $product->current_stock ?? 0 }} {{ $product->unit }}</p>
+                        <p><span class="font-medium">Mitra/Agen:</span> {{ $product->supplier->name ?? '-' }}</p>
+                        <p><span class="font-medium">Kuota Seat:</span> {{ $product->current_stock ?? 0 }} {{ $product->unit }}</p>
                     </div>
                 </div>
             </div>
@@ -87,8 +87,8 @@
                         <h3 class="text-sm font-semibold">Peringatan!</h3>
                         <div class="mt-1 text-sm">
                             <ul class="pl-5 space-y-1 list-disc">
-                                <li>Produk ini memiliki {{ $product->stockTransactionsCount ?? $product->stockTransactions()->count() }} riwayat transaksi stok</li>
-                                <li>Semua data terkait produk ini akan dihapus secara permanen</li>
+                                <li>Data jamaah ini memiliki {{ $product->stockTransactionsCount ?? $product->stockTransactions()->count() }} riwayat transaksi</li>
+                                <li>Semua data terkait jamaah ini akan dihapus secara permanen</li>
                                 <li>Tindakan ini tidak dapat dibatalkan</li>
                             </ul>
                         </div>
@@ -132,7 +132,7 @@
                             <div class="ml-4">
                                 <h3 class="text-lg font-medium text-gray-900 dark:text-white">Konfirmasi Penghapusan</h3>
                                 <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                                    <p>Anda akan menghapus produk <span class="font-semibold">${@json($product->name)}</span> secara permanen.</p>
+                                    <p>Anda akan menghapus data jamaah <span class="font-semibold">${@json($product->name)}</span> secara permanen.</p>
                                     <p class="mt-2 text-red-500 dark:text-red-400">Tindakan ini tidak dapat dibatalkan!</p>
                                 </div>
                             </div>

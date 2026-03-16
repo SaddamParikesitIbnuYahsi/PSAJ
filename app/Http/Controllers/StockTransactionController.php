@@ -62,7 +62,7 @@ class StockTransactionController extends Controller
         });
 
         return redirect()->route('transactions.index')
-            ->with('success', 'Transaksi masuk berhasil dicatat');
+            ->with('success', 'Transaksi pendaftaran berhasil dicatat');
     }
 
     /**
@@ -74,7 +74,7 @@ class StockTransactionController extends Controller
         $product = Product::findOrFail($validated['product_id']);
 
         if ($product->current_stock < $validated['quantity']) {
-            return back()->withErrors(['quantity' => 'Stok tidak mencukupi! Stok tersedia: '.$product->current_stock]);
+            return back()->withErrors(['quantity' => 'Kuota tidak mencukupi! Kuota tersedia: '.$product->current_stock]);
         }
 
         DB::transaction(function () use ($validated, $product) {
@@ -96,7 +96,7 @@ class StockTransactionController extends Controller
         });
 
         return redirect()->route('transactions.index')
-            ->with('success', 'Transaksi keluar berhasil dicatat');
+            ->with('success', 'Transaksi keberangkatan berhasil dicatat');
     }
 
     /**
@@ -168,7 +168,7 @@ class StockTransactionController extends Controller
 
         if ($validated['type'] === 'Keluar' && $product->current_stock < $validated['quantity']) {
             return response()->json([
-                'message' => 'Stok tidak mencukupi',
+                'message' => 'Kuota tidak mencukupi',
                 'available_stock' => $product->current_stock
             ], 400);
         }

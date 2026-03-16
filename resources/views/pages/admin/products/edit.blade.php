@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Edit Produk')
+@section('title', 'Edit Data Jamaah')
 
 @section('content')
     <!-- Header Section -->
@@ -21,7 +21,7 @@
                         <svg class="w-3 h-3 mx-1 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
                         </svg>
-                        <a href="{{ route('admin.products.index') }}" class="ml-1 text-sm font-medium text-gray-700 transition-colors hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">Produk</a>
+                        <a href="{{ route('admin.products.index') }}" class="ml-1 text-sm font-medium text-gray-700 transition-colors hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">Manifest Jamaah</a>
                     </div>
                 </li>
                 <li aria-current="page">
@@ -29,7 +29,7 @@
                         <svg class="w-3 h-3 mx-1 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
                         </svg>
-                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">Edit Produk</span>
+                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">Edit Data Jamaah</span>
                     </div>
                 </li>
             </ol>
@@ -38,8 +38,8 @@
         <!-- Page Title -->
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Edit Produk: {{ $product->name }}</h1>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Perbarui informasi produk sesuai kebutuhan</p>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Edit Data Jamaah: {{ $product->name }}</h1>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Perbarui informasi jamaah sesuai kebutuhan</p>
             </div>
             <div class="flex items-center space-x-3">
                 <!-- Status Badge -->
@@ -47,7 +47,7 @@
                     @if($product->current_stock <= 0) bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300
                     @elseif($product->current_stock <= $product->min_stock) bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300
                     @else bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300 @endif">
-                    Stok: {{ $product->current_stock }} {{ $product->unit }}
+                    Kuota: {{ $product->current_stock }} {{ $product->unit }}
                 </span>
                 <!-- Quick Actions -->
                 <button type="button" class="inline-flex items-center px-3 py-2 text-xs font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700" onclick="window.print()">
@@ -81,7 +81,7 @@
                 <div>
                     <h2 class="flex items-center text-lg font-semibold text-gray-900 dark:text-white">
                         <i class="mr-2 text-blue-600 fas fa-edit dark:text-blue-400"></i>
-                        Form Edit Produk
+                        Form Edit Data Jamaah
                     </h2>
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Perbarui field yang diperlukan</p>
                 </div>
@@ -101,68 +101,65 @@
             <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
                 <!-- Left Column - Basic Information -->
                 <div class="space-y-6 lg:col-span-8">
-                    <!-- Section: Product Information -->
+                    <!-- Section: Informasi Jamaah -->
                     <div class="p-6 border border-gray-200 rounded-lg bg-gray-50/50 dark:bg-gray-800/50 dark:border-gray-700">
                         <h3 class="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
-                            <i class="mr-2 text-blue-600 fas fa-box dark:text-blue-400"></i>
-                            Informasi Produk
+                            <i class="mr-2 text-blue-600 fas fa-user-circle dark:text-blue-400"></i>
+                            Informasi Jamaah
                         </h3>
                         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                            <!-- Product Name -->
+                            <!-- Nama Jamaah -->
                             <div class="md:col-span-2">
                                 <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    Nama Produk <span class="text-red-500">*</span>
+                                    Nama Lengkap Jamaah <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" id="name" name="name" value="{{ old('name', $product->name) }}" required
                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 transition-all @error('name') border-red-500 dark:border-red-500 @enderror"
-                                       placeholder="Contoh: Laptop ASUS ROG Strix G15" autofocus>
+                                       placeholder="Sesuai Paspor / KTP" autofocus>
                                 @error('name')
                                     <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <!-- SKU -->
+                            <!-- No. Registrasi / Paspor -->
                             <div>
                                 <label for="sku" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    Kode SKU <span class="text-red-500">*</span>
+                                    No. Registrasi / Paspor <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" id="sku" name="sku" value="{{ old('sku', $product->sku) }}" required
                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 transition-all @error('sku') border-red-500 dark:border-red-500 @enderror"
-                                       placeholder="SKU produk">
+                                       placeholder="ID Keberangkatan / No. Paspor">
                                 @error('sku')
                                     <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <!-- Unit -->
+                            <!-- Tipe Pendaftaran -->
                             <div>
                                 <label for="unit" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    Satuan <span class="text-red-500">*</span>
+                                    Tipe Pendaftaran <span class="text-red-500">*</span>
                                 </label>
                                 <select id="unit" name="unit" required
                                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 transition-all @error('unit') border-red-500 dark:border-red-500 @enderror">
-                                    <option value="">Pilih Satuan</option>
-                                    <option value="pcs" {{ old('unit', $product->unit) == 'pcs' ? 'selected' : '' }}>Pcs (Pieces)</option>
+                                    <option value="">Pilih Tipe</option>
+                                    <option value="pax" {{ old('unit', $product->unit) == 'pax' ? 'selected' : '' }}>Pax (Perorangan)</option>
+                                    <option value="group" {{ old('unit', $product->unit) == 'group' ? 'selected' : '' }}>Grup / Keluarga</option>
+                                    <option value="pcs" {{ old('unit', $product->unit) == 'pcs' ? 'selected' : '' }}>Pcs</option>
                                     <option value="unit" {{ old('unit', $product->unit) == 'unit' ? 'selected' : '' }}>Unit</option>
-                                    <option value="kg" {{ old('unit', $product->unit) == 'kg' ? 'selected' : '' }}>Kilogram</option>
-                                    <option value="gram" {{ old('unit', $product->unit) == 'gram' ? 'selected' : '' }}>Gram</option>
-                                    <option value="liter" {{ old('unit', $product->unit) == 'liter' ? 'selected' : '' }}>Liter</option>
-                                    <option value="pack" {{ old('unit', $product->unit) == 'pack' ? 'selected' : '' }}>Pack</option>
-                                    <option value="dus" {{ old('unit', $product->unit) == 'dus' ? 'selected' : '' }}>Dus</option>
                                 </select>
                                 @error('unit')
                                     <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <!-- Category -->
+                            <!-- Program Paket -->
                             <div>
                                 <label for="category_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    Kategori <span class="text-red-500">*</span>
+                                    Program Paket <span class="text-red-500">*</span>
                                 </label>
                                 <select id="category_id" name="category_id" required
                                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 transition-all @error('category_id') border-red-500 dark:border-red-500 @enderror">
-                                    <option value="">Pilih Kategori</option>
+                                    <option value="">Pilih Program Paket</option>
                                     @foreach($categories as $category)
                                         <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
                                             {{ $category->name }}
@@ -174,14 +171,14 @@
                                 @enderror
                             </div>
 
-                            <!-- Supplier -->
+                            <!-- Mitra / Agen -->
                             <div>
                                 <label for="supplier_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    Supplier
+                                    Mitra / Agen
                                 </label>
                                 <select id="supplier_id" name="supplier_id"
                                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 transition-all @error('supplier_id') border-red-500 dark:border-red-500 @enderror">
-                                    <option value="">Pilih Supplier (Opsional)</option>
+                                    <option value="">Pendaftaran Pusat / Pilih Agen (Opsional)</option>
                                     @foreach($suppliers as $supplier)
                                         <option value="{{ $supplier->id }}" {{ old('supplier_id', $product->supplier_id) == $supplier->id ? 'selected' : '' }}>
                                             {{ $supplier->name }}
@@ -195,17 +192,17 @@
                         </div>
                     </div>
 
-                    <!-- Section: Price & Stock -->
+                    <!-- Section: Biaya & Kuota -->
                     <div class="p-6 border border-gray-200 rounded-lg bg-gray-50/50 dark:bg-gray-800/50 dark:border-gray-700">
                         <h3 class="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
                             <i class="mr-2 text-green-600 fas fa-dollar-sign dark:text-green-400"></i>
-                            Harga & Stok
+                            Biaya & Kuota Seat
                         </h3>
                         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                            <!-- Purchase Price -->
+                            <!-- Biaya Pokok (HPP) -->
                             <div>
                                 <label for="purchase_price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    Harga Beli <span class="text-red-500">*</span>
+                                    Biaya Pokok (HPP) <span class="text-red-500">*</span>
                                 </label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -221,10 +218,10 @@
                                 @enderror
                             </div>
 
-                            <!-- Selling Price -->
+                            <!-- Harga Paket -->
                             <div>
                                 <label for="selling_price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    Harga Jual <span class="text-red-500">*</span>
+                                    Harga Paket ke Jamaah <span class="text-red-500">*</span>
                                 </label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -250,10 +247,10 @@
                                 </div>
                             </div>
 
-                            <!-- Minimum Stock -->
+                            <!-- Batas Min Kuota -->
                             <div>
                                 <label for="min_stock" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                    Stok Minimum <span class="text-red-500">*</span>
+                                    Batas Kuota Minimum <span class="text-red-500">*</span>
                                 </label>
                                 <input type="number" id="min_stock" name="min_stock" value="{{ old('min_stock', $product->min_stock) }}" min="0" required
                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 transition-all @error('min_stock') border-red-500 dark:border-red-500 @enderror"
@@ -261,28 +258,28 @@
                                 @error('min_stock')
                                     <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
-                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Sistem akan memberikan peringatan jika stok mencapai batas ini</p>
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Sistem akan memberi peringatan jika kuota seat mencapai batas ini</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Description -->
+                    <!-- Catatan Jamaah -->
                     <div class="p-6 border border-gray-200 rounded-lg bg-gray-50/50 dark:bg-gray-800/50 dark:border-gray-700">
                         <h3 class="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
                             <i class="mr-2 text-purple-600 fas fa-align-left dark:text-purple-400"></i>
-                            Deskripsi Produk
+                            Rincian / Catatan Jamaah
                         </h3>
                         <div>
                             <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                Deskripsi Detail
+                                Deskripsi / Catatan
                             </label>
                             <textarea id="description" name="description" rows="5"
                                       class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 transition-all @error('description') border-red-500 dark:border-red-500 @enderror"
-                                      placeholder="Tuliskan deskripsi lengkap tentang produk ini, termasuk spesifikasi, fitur, dan informasi penting lainnya...">{{ old('description', $product->description) }}</textarea>
+                                      placeholder="Berkas (paspor, visa), permintaan kamar, informasi kesehatan jamaah...">{{ old('description', $product->description) }}</textarea>
                             @error('description')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
-                            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Deskripsi yang detail akan membantu dalam identifikasi dan pencarian produk</p>
+                            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Catatan membantu identifikasi dan pelayanan jamaah</p>
                         </div>
                     </div>
                 </div>
@@ -293,7 +290,7 @@
                         <div class="p-6 border border-gray-200 rounded-lg bg-gray-50/50 dark:bg-gray-800/50 dark:border-gray-700">
                             <h3 class="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
                                 <i class="mr-2 text-indigo-600 fas fa-image dark:text-indigo-400"></i>
-                                Gambar Produk
+                                Foto Jamaah / Berkas
                             </h3>
 
                             <!-- Image Preview -->
@@ -342,11 +339,11 @@
                             </div>
                         </div>
 
-                        <!-- Product Stats -->
+                        <!-- Statistik Jamaah -->
                         <div class="p-6 mt-6 border border-gray-200 rounded-lg bg-gray-50/50 dark:bg-gray-800/50 dark:border-gray-700">
                             <h3 class="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
                                 <i class="mr-2 text-blue-600 fas fa-chart-bar dark:text-blue-400"></i>
-                                Statistik Produk
+                                Statistik Transaksi
                             </h3>
                             <div class="space-y-4">
                                 <div>
@@ -356,13 +353,13 @@
                                     </p>
                                 </div>
                                 <div>
-                                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Stok Masuk</h3>
+                                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Pendaftaran (Masuk)</h3>
                                     <p class="text-2xl font-semibold text-green-600 dark:text-green-400">
                                         {{ $product->stockTransactions()->where('type', 'Masuk')->sum('quantity') }}
                                     </p>
                                 </div>
                                 <div>
-                                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Stok Keluar</h3>
+                                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Keberangkatan (Keluar)</h3>
                                     <p class="text-2xl font-semibold text-red-600 dark:text-red-400">
                                         {{ $product->stockTransactions()->where('type', 'Keluar')->sum('quantity') }}
                                     </p>
@@ -375,12 +372,12 @@
                             <a href="{{ route('admin.products.show', $product->id) }}"
                                class="flex items-center justify-center w-full px-4 py-3 mb-3 text-sm font-medium text-gray-900 transition-colors bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
                                 <i class="mr-2 fas fa-eye"></i>
-                                Lihat Detail Produk
+                                Lihat Detail Jamaah
                             </a>
                             <button type="button" id="deleteProductBtn"
                                     class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition-colors bg-red-600 rounded-lg hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700">
                                 <i class="mr-2 fas fa-trash-alt"></i>
-                                Hapus Produk
+                                Hapus Data Jamaah
                             </button>
                         </div>
                     </div>
@@ -402,7 +399,7 @@
                     <button type="submit"
                             class="inline-flex items-center px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors">
                         <i class="mr-2 fas fa-save"></i>
-                        Update Produk
+                        Update Data Jamaah
                     </button>
                 </div>
             </div>
@@ -513,7 +510,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const deleteProductBtn = document.getElementById('deleteProductBtn');
     if (deleteProductBtn) {
         deleteProductBtn.addEventListener('click', function() {
-            if (confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
+            if (confirm('Apakah Anda yakin ingin menghapus data jamaah ini?')) {
                 document.getElementById('deleteProductForm').submit();
             }
         });

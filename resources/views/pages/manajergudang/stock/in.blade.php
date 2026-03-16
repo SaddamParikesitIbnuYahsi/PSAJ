@@ -1,96 +1,249 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Catat Barang Masuk')
+@section('title', 'Pembayaran Paket Umroh')
 
 @push('scripts')
-{{-- Script Alpine.js --}}
 <script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('stockForm', () => ({
-            selectedProductId: '{{ old('product_id', request()->get('product_id')) }}' || null,
-            quantity: '{{ old('quantity') }}' || 1,
-            products: {!! json_encode($products->keyBy('id')) !!},
-            init() {
-                const selectEl = document.getElementById('product_id');
-                if (!selectEl) return;
-                const tomselect = new TomSelect(selectEl, {
-                    create: false,
-                    sortField: { field: "text", direction: "asc" },
-                    render: {
-                        option: function(data, escape) {
-                            return `<div class="flex items-center space-x-3"><img class="w-10 h-10 object-cover rounded" src="${escape(data.image_url)}" alt="${escape(data.text)}"><div><div class="font-medium">${escape(data.text)}</div><div class="text-xs text-gray-500">Stok: ${escape(data.stock)} ${escape(data.unit)}</div></div></div>`;
-                        },
-                        item: function(item, escape) {
-                            return `<div class="font-medium">${escape(item.text)}</div>`;
-                        }
-                    }
-                });
-                if (this.selectedProductId) tomselect.setValue(this.selectedProductId);
-                tomselect.on('change', (value) => { this.selectedProductId = value; });
-            },
-            get currentProduct() { return this.selectedProductId ? this.products[this.selectedProductId] : null; },
-            get currentStock() { return this.currentProduct ? this.currentProduct.current_stock : 0; },
-            get unit() { return this.currentProduct ? this.currentProduct.unit : ''; },
-            get finalStock() {
-                const current = parseInt(this.currentStock);
-                const added = parseInt(this.quantity) || 0;
-                return current + added;
+    document.addEventListener('alpine:init', function() {
+        Alpine.data('paymentForm', () => ({ paymentMethod: 'bayar_langsung', showPaymentInfo: false }));
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        var fileInput = document.getElementById('bukti_pembayaran');
+        var btnStep1 = document.getElementById('btnStep1');
+        var hintStep1 = document.getElementById('hintStep1');
+        var step2Box = document.getElementById('step2Box');
+
+        function setStep1Enabled(enabled) {
+            if (!btnStep1) return;
+            btnStep1.disabled = !enabled;
+            if (enabled) {
+                btnStep1.classList.remove('bg-gray-300', 'dark:bg-gray-600', 'cursor-not-allowed');
+                btnStep1.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'cursor-pointer');
+                if (hintStep1) hintStep1.textContent = '1) Bukti sudah dipilih. Klik Lanjut untuk menampilkan tombol Confirm final.';
+            } else {
+                btnStep1.classList.add('bg-gray-300', 'dark:bg-gray-600', 'cursor-not-allowed');
+                btnStep1.classList.remove('bg-emerald-600', 'hover:bg-emerald-700', 'cursor-pointer');
+                if (hintStep1) hintStep1.textContent = '1) Pilih file bukti pembayaran, lalu klik tombol Lanjut.';
             }
-        }));
+        }
+
+        if (fileInput && btnStep1) {
+            fileInput.addEventListener('change', function() {
+                var hasFile = this.files && this.files.length > 0;
+                setStep1Enabled(hasFile);
+                if (!hasFile && step2Box) step2Box.classList.add('hidden');
+            });
+
+            btnStep1.addEventListener('click', function() {
+                if (btnStep1.disabled) return;
+                if (step2Box) {
+                    step2Box.classList.remove('hidden');
+                    step2Box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            });
+        }
     });
 </script>
 @endpush
 
 @section('content')
 <div class="container p-4 mx-auto sm:p-8">
-    <div x-data="stockForm" x-init="init()">
+    <div x-data="paymentForm">
         <div class="py-8">
-            {{-- [IMPROVEMENT] Header yang lebih terintegrasi --}}
             <div class="flex items-center gap-4 mb-8">
                 <div class="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/50 dark:to-green-800/50">
-                    <i class="text-xl text-green-600 fas fa-plus dark:text-green-400"></i>
+                    <i class="text-xl text-green-600 fas fa-shopping-cart dark:text-green-400"></i>
                 </div>
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Catat Barang Masuk</h1>
-                    <p class="mt-1 text-gray-500 dark:text-gray-400">Tambah stok untuk produk yang sudah ada di dalam sistem.</p>
+                    <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Pembayaran Paket Umroh</h1>
+                    <p class="mt-1 text-gray-500 dark:text-gray-400">
+                        Lengkapi data jamaah dan upload bukti pembayaran untuk konfirmasi.
+                    </p>
                 </div>
             </div>
 
-            <form action="{{ route('manajergudang.stock.in.store') }}" method="POST" class="grid grid-cols-1 gap-8 mt-8 lg:grid-cols-3">
+            <form action="{{ route('manajergudang.stock.in.store') }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 gap-8 mt-8 lg:grid-cols-3">
                 @csrf
+                <input type="hidden" name="package_id" value="{{ $package->id }}">
+                <input type="hidden" name="package_price" value="{{ $packagePrice }}">
+
                 <div class="p-6 space-y-6 bg-white rounded-xl shadow-lg lg:col-span-2 dark:bg-slate-800">
-                    @if ($errors->any())
-                        <div class="p-4 mb-4 text-red-700 bg-red-100 border-l-4 border-red-500" role="alert"><p class="font-bold">Terjadi Kesalahan</p><ul>@foreach ($errors->all() as $error)<li>- {{ $error }}</li>@endforeach</ul></div>
+                    @if (session('error'))
+                        <div class="p-4 mb-4 text-red-700 bg-red-100 border-l-4 border-red-500 dark:bg-red-900/30 dark:text-red-300" role="alert">
+                            <p class="font-bold">Gagal</p>
+                            <p class="mt-1 text-sm">{{ session('error') }}</p>
+                        </div>
                     @endif
-                    
-                    <div><label for="product_id" class="flex items-center mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"><i class="w-5 mr-2 fas fa-box"></i>Produk <span class="ml-1 text-red-500">*</span></label><select id="product_id" name="product_id" placeholder="Cari dan pilih produk..." required>@foreach ($products as $product)<option value="{{ $product->id }}" data-image_url="{{ $product->image ? asset('storage/' . $product->image) : 'https://ui-avatars.com/api/?name='.urlencode($product->name) }}" data-stock="{{ $product->current_stock }}" data-unit="{{ $product->unit }}" {{ old('product_id', request()->get('product_id')) == $product->id ? 'selected' : '' }}>{{ $product->name }}</option>@endforeach</select></div>
-                    <div><label for="supplier_id" class="flex items-center mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"><i class="w-5 mr-2 fas fa-truck"></i>Supplier <span class="ml-1 text-red-500">*</span></label><select id="supplier_id" name="supplier_id" class="w-full px-4 py-2 text-sm border rounded-lg dark:bg-slate-700 dark:border-gray-600 dark:text-white" required><option value="" disabled selected>-- Pilih Supplier --</option>@foreach ($suppliers as $supplier)<option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>@endforeach</select></div>
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <div><label for="quantity" class="flex items-center mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"><i class="w-5 mr-2 fas fa-cubes"></i>Jumlah Masuk <span class="ml-1 text-red-500">*</span></label><input type="number" id="quantity" name="quantity" x-model.number="quantity" placeholder="1" min="1" class="w-full px-4 py-2 text-sm border rounded-lg dark:bg-slate-700 dark:border-gray-600 dark:text-white" required></div>
-                        <div><label for="transaction_date" class="flex items-center mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"><i class="w-5 mr-2 fas fa-calendar-alt"></i>Tanggal Transaksi <span class="ml-1 text-red-500">*</span></label><input type="date" id="transaction_date" name="transaction_date" value="{{ old('transaction_date', now()->format('Y-m-d')) }}" max="{{ now()->format('Y-m-d') }}" class="w-full px-4 py-2 text-sm border rounded-lg dark:bg-slate-700 dark:border-gray-600 dark:text-white" required></div>
+                    @if ($errors->any())
+                        <div class="p-4 mb-4 text-red-700 bg-red-100 border-l-4 border-red-500 dark:bg-red-900/30 dark:text-red-300" role="alert">
+                            <p class="font-bold">Terjadi Kesalahan</p>
+                            <ul>@foreach ($errors->all() as $error)<li>- {{ $error }}</li>@endforeach</ul>
+                        </div>
+                    @endif
+
+                    {{-- Paket Terpilih (Read-only) --}}
+                    <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800">
+                        <h3 class="flex items-center mb-3 text-base font-bold text-emerald-800 dark:text-emerald-300">
+                            <i class="mr-2 fas fa-check-circle"></i> Paket Terpilih
+                        </h3>
+                        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $package->name }}</p>
+                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ $package->description }}</p>
+                        <p class="mt-2 text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                            Rp {{ number_format($packagePrice, 0, ',', '.') }}
+                        </p>
                     </div>
-                    <div><label for="notes" class="flex items-center mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"><i class="w-5 mr-2 fas fa-pencil-alt"></i>Catatan (Opsional)</label><textarea id="notes" name="notes" rows="3" placeholder="Contoh: No. PO #12345" class="w-full px-4 py-2 text-sm border rounded-lg dark:bg-slate-700 dark:border-gray-600 dark:text-white">{{ old('notes') }}</textarea></div>
+
+                    <div>
+                        <label for="name" class="flex items-center mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <i class="w-5 mr-2 fas fa-user"></i>Nama Jamaah <span class="ml-1 text-red-500">*</span>
+                        </label>
+                        <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder="Nama lengkap jamaah" class="w-full px-4 py-2 text-sm border rounded-lg dark:bg-slate-700 dark:border-gray-600 dark:text-white" required>
+                    </div>
+
+                    <div>
+                        <label for="sku" class="flex items-center mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <i class="w-5 mr-2 fas fa-id-card"></i>No. Registrasi / Paspor (Opsional)
+                        </label>
+                        <input type="text" id="sku" name="sku" value="{{ old('sku') }}" placeholder="Contoh: UMR-2025-0001" class="w-full px-4 py-2 text-sm border rounded-lg dark:bg-slate-700 dark:border-gray-600 dark:text-white">
+                    </div>
+
+                    <div>
+                        <label for="supplier_id" class="flex items-center mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <i class="w-5 mr-2 fas fa-handshake"></i>Mitra / Agen <span class="ml-1 text-red-500">*</span>
+                        </label>
+                        <select id="supplier_id" name="supplier_id" class="w-full px-4 py-2 text-sm border rounded-lg dark:bg-slate-700 dark:border-gray-600 dark:text-white" required>
+                            <option value="" disabled selected>-- Pilih Mitra / Agen --</option>
+                            @foreach ($suppliers as $supplier)
+                                <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>
+                                    {{ $supplier->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <div>
+                            <label for="quantity" class="flex items-center mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                <i class="w-5 mr-2 fas fa-user-plus"></i>Jumlah Seat <span class="ml-1 text-red-500">*</span>
+                            </label>
+                            <input type="number" id="quantity" name="quantity" value="{{ old('quantity', 1) }}" placeholder="1" min="1" class="w-full px-4 py-2 text-sm border rounded-lg dark:bg-slate-700 dark:border-gray-600 dark:text-white" required>
+                        </div>
+                        <div>
+                            <label for="transaction_date" class="flex items-center mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                <i class="w-5 mr-2 fas fa-calendar-alt"></i>Tanggal Transaksi <span class="ml-1 text-red-500">*</span>
+                            </label>
+                            <input type="date" id="transaction_date" name="transaction_date" value="{{ old('transaction_date', now()->format('Y-m-d')) }}" class="w-full px-4 py-2 text-sm border rounded-lg dark:bg-slate-700 dark:border-gray-600 dark:text-white" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="flex items-center mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <i class="w-5 mr-2 fas fa-wallet"></i>Metode Pembayaran
+                        </label>
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            <button type="button"
+                                @click="paymentMethod = 'bayar_langsung'"
+                                :class="paymentMethod === 'bayar_langsung'
+                                    ? 'border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+                                    : 'border-slate-200 bg-slate-50 text-slate-600 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200'"
+                                class="flex items-center w-full px-4 py-3 text-sm font-semibold border rounded-xl transition">
+                                <i class="mr-2 fas fa-money-bill-wave"></i>
+                                Bayar Langsung
+                            </button>
+                            <button type="button"
+                                @click="paymentMethod = 'nyicil'"
+                                :class="paymentMethod === 'nyicil'
+                                    ? 'border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+                                    : 'border-slate-200 bg-slate-50 text-slate-600 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200'"
+                                class="flex items-center w-full px-4 py-3 text-sm font-semibold border rounded-xl transition">
+                                <i class="mr-2 fas fa-calendar-check"></i>
+                                Nyicil / Cicilan
+                            </button>
+                        </div>
+                        <input type="hidden" name="payment_method" x-model="paymentMethod">
+                        <p class="mt-2 text-xs text-slate-500 dark:text-slate-400" x-show="paymentMethod === 'nyicil'">
+                            Skema cicilan dapat disesuaikan saat konfirmasi dengan admin.
+                        </p>
+                    </div>
+
+                    <div>
+                        <label for="notes" class="flex items-center mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <i class="w-5 mr-2 fas fa-pencil-alt"></i>Catatan Tambahan (Opsional)
+                        </label>
+                        <textarea id="notes" name="notes" rows="3" placeholder="Contoh: Catatan khusus jamaah / permintaan kamar" class="w-full px-4 py-2 text-sm border rounded-lg dark:bg-slate-700 dark:border-gray-600 dark:text-white">{{ old('notes') }}</textarea>
+                    </div>
+
+                    <div class="pt-4 border-t border-dashed dark:border-slate-700">
+                        <button type="button"
+                                @click="showPaymentInfo = !showPaymentInfo"
+                                class="inline-flex items-center px-5 py-3 text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:underline">
+                            <i class="mr-2 fas" :class="showPaymentInfo ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                            Instruksi Pembayaran
+                        </button>
+                    </div>
+
+                    <div x-show="showPaymentInfo" x-cloak class="p-4 mt-4 text-sm border rounded-xl bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800 text-slate-800 dark:text-slate-200">
+                        <p class="mb-2">
+                            Silakan lakukan pembayaran ke rekening berikut:
+                        </p>
+                        <div class="p-3 mb-3 text-sm font-bold bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-800 rounded-lg">
+                            BANK BSI (Syariah)<br>
+                            No. Rekening: <span class="font-black">1234 5678 9012</span><br>
+                            a.n. <span class="font-black">PT Al Madinah Haromain Travel</span>
+                        </div>
+                        <p class="mb-2">
+                            Setelah transfer, <span class="font-bold">wajib upload bukti pembayaran</span> di form sebelah kanan.
+                        </p>
+                    </div>
                 </div>
 
+                {{-- Sidebar Kanan: Upload Bukti Pembayaran --}}
                 <div class="lg:col-span-1">
                     <div class="sticky p-6 bg-white rounded-xl shadow-lg top-24 dark:bg-slate-800">
-                        <div x-show="!selectedProductId" class="py-10 text-center text-gray-500 dark:text-gray-400"><i class="mb-4 text-5xl fas fa-box-open opacity-50"></i><p>Pilih produk untuk melihat informasi stok.</p></div>
-                        <div x-show="selectedProductId" x-cloak class="space-y-4">
-                            <h3 class="flex items-center pb-4 text-lg font-semibold text-gray-900 border-b dark:text-white dark:border-slate-700"><i class="mr-3 text-blue-500 fas fa-info-circle"></i>Informasi Stok</h3>
-                            <div class="flex items-center space-x-4">
-                                <img :src="currentProduct?.image ? '{{ asset('storage') }}/' + currentProduct.image : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(currentProduct?.name || '')" alt="product" class="object-cover w-16 h-16 rounded-lg">
-                                <div><p class="font-semibold text-gray-800 dark:text-white" x-text="currentProduct?.name"></p><p class="text-sm text-gray-500 dark:text-gray-400" x-text="`SKU: ${currentProduct?.sku}`"></p></div>
-                            </div>
-                            <div class="pt-4 space-y-2 border-t dark:border-slate-700">
-                                <div class="flex items-center justify-between"><span class="text-sm text-gray-600 dark:text-gray-400">Stok Saat Ini:</span><span class="text-lg font-bold text-gray-900 dark:text-white" x-text="`${currentStock} ${unit}`"></span></div>
-                                <div class="flex items-center justify-between text-sm"><span class="text-gray-600 dark:text-gray-400">Jumlah Masuk:</span><span class="font-semibold text-green-500" x-text="`+ ${quantity || 0} ${unit}`"></span></div>
-                            </div>
-                            <div class="pt-4 border-t dark:border-slate-700">
-                                <div class="flex items-center justify-between"><span class="font-medium text-gray-600 dark:text-gray-400">Stok Setelahnya:</span><span class="text-2xl font-bold text-blue-600 dark:text-blue-400" x-text="`${finalStock} ${unit}`"></span></div>
-                            </div>
-                            <div class="pt-6">
-                                <button type="submit" class="flex items-center justify-center w-full px-6 py-3 font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700"><i class="mr-2 fas fa-save"></i>Simpan Transaksi</button>
-                            </div>
+                        <h3 class="flex items-center pb-4 text-lg font-semibold text-gray-900 border-b dark:text-white dark:border-slate-700">
+                            <i class="mr-3 text-emerald-500 fas fa-file-upload"></i>Upload Bukti Pembayaran
+                        </h3>
+                        <p class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+                            Upload screenshot atau foto bukti transfer (wajib)<span class="text-red-500">*</span>
+                        </p>
+                        <div class="mb-4">
+                            <input type="file" id="bukti_pembayaran" name="bukti_pembayaran"
+                                accept="image/*,.pdf"
+                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-emerald-900/30 dark:file:text-emerald-300"
+                                required>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Format: JPG, PNG, GIF, atau PDF (max 5MB)</p>
+                        </div>
+
+                        <div>
+                            <p class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Detail Paket</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400">{{ $package->name }}</p>
+                            <p class="mt-1 text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                                Rp {{ number_format($packagePrice, 0, ',', '.') }}
+                            </p>
+                        </div>
+
+                        <div class="pt-6">
+                            <p class="mb-2 text-xs text-gray-500 dark:text-gray-400" id="hintStep1">
+                                1) Pilih file bukti pembayaran, lalu klik tombol Lanjut.
+                            </p>
+                            <button type="button" id="btnStep1"
+                                disabled
+                                class="flex items-center justify-center w-full px-6 py-3 font-semibold text-white rounded-lg shadow-md transition bg-gray-300 dark:bg-gray-600 cursor-not-allowed">
+                                <i class="mr-2 fas fa-arrow-right"></i>Lanjut
+                            </button>
+                        </div>
+
+                        <div id="step2Box" class="hidden mt-5 p-4 rounded-xl border border-emerald-200 bg-emerald-50 dark:bg-emerald-900/20 dark:border-emerald-800">
+                            <p class="text-sm font-bold text-emerald-800 dark:text-emerald-300 mb-2">
+                                2) Konfirmasi Pengiriman ke Admin
+                            </p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400 mb-4">
+                                Pastikan data jamaah sudah benar. Setelah Confirm, data akan masuk ke Manifest Admin.
+                            </p>
+                            <button type="submit" id="btnConfirmSubmit"
+                                class="flex items-center justify-center w-full px-6 py-3 font-semibold text-white bg-emerald-600 rounded-lg shadow-md hover:bg-emerald-700 transition">
+                                <i class="mr-2 fas fa-check-circle"></i>Confirm — Kirim ke Admin
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Detail Supplier: ' . $supplier->name)
+@section('title', 'Detail Mitra: ' . $supplier->name)
 
 @section('content')
 <div class="container p-4 mx-auto sm:p-8">
@@ -9,12 +9,12 @@
             <a href="{{ route('manajergudang.suppliers.index') }}" class="flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-md dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700" title="Kembali"><i class="text-gray-600 fas fa-arrow-left dark:text-gray-300"></i></a>
             <div>
                 <h1 class="text-2xl font-bold text-gray-800 dark:text-white">{{ $supplier->name }}</h1>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Detail informasi dan produk yang disuplai.</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Detail informasi dan jamaah yang didaftarkan via mitra ini.</p>
             </div>
         </div>
 
         <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            {{-- Kolom Kiri: Info Supplier --}}
+            {{-- Kolom Kiri: Info Mitra --}}
             <div class="space-y-8 lg:col-span-1">
                 <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
                     <div class="flex items-center mb-6 space-x-4">
@@ -34,18 +34,18 @@
                 </div>
             </div>
 
-            {{-- Kolom Kanan: Daftar Produk dari Supplier Ini --}}
+            {{-- Kolom Kanan: Daftar Jamaah dari Mitra Ini --}}
             <div class="lg:col-span-2">
                 <div class="bg-white rounded-lg shadow-md dark:bg-slate-800">
                     <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Produk dari Supplier Ini ({{ $supplier->products->count() }})</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Jamaah dari Mitra Ini ({{ $supplier->products->count() }})</h3>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full table-auto">
                             <thead class="bg-gray-50 dark:bg-slate-700/50">
                                 <tr>
-                                    <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-300">Nama Produk</th>
-                                    <th class="px-6 py-3 text-xs font-medium text-center text-gray-500 uppercase dark:text-gray-300">Stok Saat Ini</th>
+                                    <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-300">Nama Jamaah</th>
+                                    <th class="px-6 py-3 text-xs font-medium text-center text-gray-500 uppercase dark:text-gray-300">Kuota</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y dark:divide-slate-700 dark:bg-slate-800">
@@ -66,7 +66,7 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr><td colspan="2" class="px-6 py-10 text-center text-gray-500 dark:text-gray-400">Supplier ini belum memiliki produk terdaftar.</td></tr>
+                                    <tr><td colspan="2" class="px-6 py-10 text-center text-gray-500 dark:text-gray-400">Mitra ini belum memiliki jamaah terdaftar.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>

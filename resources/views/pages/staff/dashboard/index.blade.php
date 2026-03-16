@@ -122,7 +122,7 @@
         </div>
         
         <div class="space-y-8">
-            {{-- Stok Menipis --}}
+            {{-- Kuota Menipis --}}
             <div class="p-6 bg-white rounded-3xl shadow-sm border border-slate-100 dark:bg-slate-800">
                 <h5 class="text-sm font-black uppercase text-red-600 mb-4 flex items-center gap-2">
                     <i class="fas fa-exclamation-triangle"></i> Sisa Seat Menipis
@@ -137,7 +137,7 @@
                             <i class="fas fa-arrow-down text-red-400"></i>
                         </div>
                     @empty
-                        <p class="text-xs text-center text-slate-400 py-4">Stok Aman</p>
+                        <p class="text-xs text-center text-slate-400 py-4">Kuota Aman</p>
                     @endforelse
                 </div>
             </div>

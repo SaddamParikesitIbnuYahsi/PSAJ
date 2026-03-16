@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth; // <-- Tambahkan ini
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Product;
 use App\Models\Supplier;
 use App\Models\Category;
@@ -107,19 +108,36 @@ class ManagerDashboardController extends Controller
 
     // === Fungsionalitas Manajemen Stok ===
 
-    public function stockIn()
+    public function stockIn(Request $request)
     {
-        // [PERBAIKAN KECIL] Gunakan query yang lebih efisien untuk mengambil stok
-        $products = Product::orderBy('name')->get();
-        // Load relasi stockTransactions untuk setiap produk jika belum di-load
-        $products->load('stockTransactions');
+        $packageId = $request->get('package_id');
+        if (!$packageId) {
+            return redirect()->route('manajergudang.dashboard')->with('error', 'Pilih paket terlebih dahulu dari halaman utama.');
+        }
+
+        $package = Category::find($packageId);
+        if (!$package) {
+            return redirect()->route('manajergudang.dashboard')->with('error', 'Paket tidak ditemukan.');
+        }
+
+        $packagePrices = [
+            1 => 25_000_000,  // Paket Ekonomis
+            2 => 35_000_000,  // Paket VIP
+            3 => 40_000_000, // Paket Keluarga
+        ];
+        $packagePrice = $packagePrices[$packageId] ?? 25_000_000;
 
         $suppliers = Supplier::orderBy('name')->get(['id', 'name']);
-        return view('pages.manajergudang.stock.in', compact('products', 'suppliers'));
+        return view('pages.manajergudang.stock.in', compact('package', 'packagePrice', 'suppliers'));
     }
 
     public function stockInStore(Request $request)
     {
+        $packageId = $request->get('package_id');
+        if ($packageId) {
+            return $this->stockInStoreFromPackage($request);
+        }
+
         $validatedData = $request->validate([
             'product_id' => 'required|exists:products,id',
             'supplier_id' => 'required|exists:suppliers,id',
@@ -130,10 +148,7 @@ class ManagerDashboardController extends Controller
 
         try {
             DB::transaction(function () use ($validatedData) {
-                // 1. Cari produk yang akan diupdate
                 $product = Product::findOrFail($validatedData['product_id']);
-
-                // 2. Buat catatan transaksi
                 StockTransaction::create([
                     'product_id' => $validatedData['product_id'],
                     'user_id' => Auth::id(),
@@ -144,16 +159,83 @@ class ManagerDashboardController extends Controller
                     'date' => Carbon::parse($validatedData['transaction_date'])->setTimeFrom(now()),
                     'status' => 'Diterima',
                 ]);
-
-                // 3. [FIX] Update stok di tabel products menggunakan increment
                 $product->increment('current_stock', $validatedData['quantity']);
             });
-
-            return redirect()->route('manajergudang.dashboard')->with('success', 'Transaksi barang masuk berhasil dicatat.');
-
+            return redirect()->route('manajergudang.dashboard')->with('success', 'Transaksi pendaftaran berhasil dicatat.');
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
         }
+    }
+
+    protected function stockInStoreFromPackage(Request $request)
+    {
+        $validatedData = $request->validate([
+            'package_id' => 'required|exists:categories,id',
+            'package_price' => 'required|numeric|min:0',
+            'name' => 'required|string|max:255',
+            'sku' => 'nullable|string|max:100',
+            'supplier_id' => 'required|exists:suppliers,id',
+            'quantity' => 'required|integer|min:1',
+            'transaction_date' => 'required|date',
+            'notes' => 'nullable|string|max:500',
+            'bukti_pembayaran' => 'required|file|mimes:jpeg,png,jpg,gif,pdf|max:5120',
+        ]);
+
+        try {
+            $path = $request->file('bukti_pembayaran')->store('bukti-pembayaran', 'public');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal mengupload bukti pembayaran: ' . $e->getMessage())->withInput();
+        }
+
+        $sku = $validatedData['sku'] ?: $this->generateJamaahSku();
+
+        try {
+            DB::transaction(function () use ($validatedData, $path, $sku) {
+                $product = Product::create([
+                    'category_id' => $validatedData['package_id'],
+                    'supplier_id' => $validatedData['supplier_id'],
+                    'name' => $validatedData['name'],
+                    'sku' => $sku,
+                    'description' => $validatedData['notes'],
+                    'purchase_price' => (float) $validatedData['package_price'] * 0.88,
+                    'selling_price' => (float) $validatedData['package_price'],
+                    'image' => $path,
+                    'current_stock' => $validatedData['quantity'],
+                    'min_stock' => 0,
+                    'unit' => 'pax',
+                ]);
+
+                StockTransaction::create([
+                    'product_id' => $product->id,
+                    'user_id' => Auth::id(),
+                    'supplier_id' => $validatedData['supplier_id'],
+                    'type' => 'Masuk',
+                    'quantity' => $validatedData['quantity'],
+                    'notes' => 'Registrasi jamaah baru - ' . ($validatedData['notes'] ?: 'Pembayaran paket umroh'),
+                    'date' => Carbon::parse($validatedData['transaction_date'])->setTimeFrom(now()),
+                    'status' => 'Diterima',
+                ]);
+            });
+
+            return redirect()->route('manajergudang.dashboard')
+                ->with('success', 'Berhasil! Transaksi selesai dan data jamaah telah masuk ke admin.')
+                ->withFragment('paket');
+
+        } catch (\Exception $e) {
+            Storage::disk('public')->delete($path);
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
+        }
+    }
+
+    protected function generateJamaahSku(): string
+    {
+        $year = now()->format('Y');
+        $last = Product::whereYear('created_at', $year)
+            ->where('sku', 'like', "UMR-{$year}-%")
+            ->orderByDesc('id')
+            ->first();
+        $num = $last ? (int) substr($last->sku, -4) + 1 : 1;
+        return sprintf('UMR-%s-%04d', $year, $num);
     }
 
     public function stockOut()
@@ -181,7 +263,7 @@ class ManagerDashboardController extends Controller
                 // 2. Validasi stok sebelum melanjutkan
                 if ($validatedData['quantity'] > $product->current_stock) {
                     // Melemparkan exception akan otomatis me-rollback transaksi DB
-                    throw new \Exception('Stok tidak mencukupi. Stok tersedia: ' . $product->current_stock);
+                    throw new \Exception('Kuota tidak mencukupi. Kuota tersedia: ' . $product->current_stock);
                 }
 
                 // 3. Buat catatan transaksi keluar
@@ -199,7 +281,7 @@ class ManagerDashboardController extends Controller
                 $product->decrement('current_stock', $validatedData['quantity']);
             });
 
-            return redirect()->route('manajergudang.dashboard')->with('success', 'Transaksi barang keluar berhasil dicatat.');
+            return redirect()->route('manajergudang.dashboard')->with('success', 'Transaksi keberangkatan berhasil dicatat.');
         
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
@@ -256,7 +338,7 @@ class ManagerDashboardController extends Controller
                         'supplier_id' => $item['supplier_id'] ?? null, // [BARU] Simpan supplier_id
                         'type' => $difference > 0 ? 'Masuk' : 'Keluar', 
                         'quantity' => abs($difference), 
-                        'notes' => 'Penyesuaian Stock Opname',
+                        'notes' => 'Penyesuaian Rekonsiliasi Kuota',
                         'date' => now(),
                         'status' => $difference > 0 ? 'Diterima' : 'Dikeluarkan',
                     ]);
@@ -266,7 +348,7 @@ class ManagerDashboardController extends Controller
             }
         });
 
-        return redirect()->route('manajergudang.stock.opname')->with('success', 'Stock opname berhasil disimpan dan stok telah disesuaikan.');
+        return redirect()->route('manajergudang.stock.opname')->with('success', 'Rekonsiliasi kuota berhasil disimpan dan data telah disesuaikan.');
     }
 
     public function supplierList(Request $request)

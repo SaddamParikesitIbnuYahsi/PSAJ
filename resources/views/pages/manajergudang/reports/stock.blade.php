@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Laporan Stok Produk')
+@section('title', 'Laporan Kuota Seat')
 
 @section('content')
 <div class="container px-4 mx-auto sm:px-8">
@@ -8,16 +8,16 @@
         {{-- Header Halaman --}}
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Laporan Stok Produk</h1>
-                <p class="mt-1 text-gray-600 dark:text-gray-400">Ringkasan kondisi stok untuk semua produk dalam sistem.</p>
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Laporan Kuota Seat</h1>
+                <p class="mt-1 text-gray-600 dark:text-gray-400">Ringkasan kuota untuk semua paket/jamaah dalam sistem.</p>
             </div>
         </div>
 
-        {{-- Kartu Ringkasan Stok --}}
+        {{-- Kartu Ringkasan Kuota --}}
         <div class="grid grid-cols-1 gap-6 mb-6 md:grid-cols-3">
-            <div class="p-6 bg-white rounded-lg shadow dark:bg-slate-800"><h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Varian Produk</h4><p class="mt-1 text-3xl font-bold text-gray-800 dark:text-white">{{ number_format($products->total()) }}</p></div>
-            <div class="p-6 bg-white rounded-lg shadow dark:bg-slate-800"><h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Produk Stok Rendah</h4><p class="mt-1 text-3xl font-bold text-yellow-500">{{ $products->filter(fn($p) => $p->current_stock <= $p->minimum_stock && $p->current_stock > 0)->count() }}</p></div>
-            <div class="p-6 bg-white rounded-lg shadow dark:bg-slate-800"><h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Produk Stok Habis</h4><p class="mt-1 text-3xl font-bold text-red-500">{{ $products->filter(fn($p) => $p->current_stock <= 0)->count() }}</p></div>
+            <div class="p-6 bg-white rounded-lg shadow dark:bg-slate-800"><h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Data Jamaah / Paket</h4><p class="mt-1 text-3xl font-bold text-gray-800 dark:text-white">{{ number_format($products->total()) }}</p></div>
+            <div class="p-6 bg-white rounded-lg shadow dark:bg-slate-800"><h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Kuota Menipis</h4><p class="mt-1 text-3xl font-bold text-yellow-500">{{ $products->filter(fn($p) => $p->current_stock <= $p->minimum_stock && $p->current_stock > 0)->count() }}</p></div>
+            <div class="p-6 bg-white rounded-lg shadow dark:bg-slate-800"><h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Kuota Penuh / Habis</h4><p class="mt-1 text-3xl font-bold text-red-500">{{ $products->filter(fn($p) => $p->current_stock <= 0)->count() }}</p></div>
         </div>
 
         {{-- Panel Filter & Tabel --}}
@@ -28,7 +28,7 @@
                         <div class="relative flex-1">
                             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><i class="text-gray-400 fas fa-filter"></i></div>
                             <select name="category_id" id="category_id" class="w-full py-2 pl-10 pr-4 border rounded-lg dark:bg-slate-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500" onchange="this.form.submit()">
-                                <option value="">Filter Berdasarkan Kategori</option>
+                                <option value="">Filter Berdasarkan Program Paket</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                 @endforeach
@@ -46,16 +46,16 @@
                     <thead class="bg-gray-50 dark:bg-slate-700">
                         <tr>
                             {{-- Memberi lebar spesifik pada kolom --}}
-                            <th class="w-2/5 px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-300">Produk</th>
-                            <th class="w-1/5 px-6 py-3 text-xs font-medium text-center text-gray-500 uppercase dark:text-gray-300">Kategori</th>
-                            <th class="w-1/5 px-6 py-3 text-xs font-medium text-center text-gray-500 uppercase dark:text-gray-300">Stok</th>
+                            <th class="w-2/5 px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-300">Jamaah / Paket</th>
+                            <th class="w-1/5 px-6 py-3 text-xs font-medium text-center text-gray-500 uppercase dark:text-gray-300">Program Paket</th>
+                            <th class="w-1/5 px-6 py-3 text-xs font-medium text-center text-gray-500 uppercase dark:text-gray-300">Kuota</th>
                             <th class="w-1/5 px-6 py-3 text-xs font-medium text-center text-gray-500 uppercase dark:text-gray-300">Status</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y dark:bg-slate-800 dark:divide-slate-700">
                         @forelse ($products as $product)
                         <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/50">
-                            {{-- Kolom Produk --}}
+                            {{-- Kolom Jamaah / Paket --}}
                             <td class="px-6 py-4">
                                 <div class="flex items-center">
                                     <img class="object-cover w-10 h-10 mr-4 rounded-lg" src="{{ $product->image ? asset('storage/' . $product->image) : 'https://ui-avatars.com/api/?name='.urlencode($product->name).'&background=random&size=128' }}" alt="{{ $product->name }}">
@@ -65,11 +65,11 @@
                                     </div>
                                 </div>
                             </td>
-                            {{-- Kolom Kategori (rata tengah) --}}
+                            {{-- Kolom Program Paket (rata tengah) --}}
                             <td class="px-6 py-4 text-center">
                                 <span class="inline-block px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">{{ $product->category->name ?? 'N/A' }}</span>
                             </td>
-                            {{-- Kolom Stok (rata tengah) --}}
+                            {{-- Kolom Kuota (rata tengah) --}}
                             <td class="px-6 py-4 text-center">
                                 <p class="text-lg font-bold text-gray-900 dark:text-white">{{ number_format($product->current_stock) }}</p>
                                 <p class="text-xs text-gray-500 dark:text-gray-400">Min: {{ number_format($product->min_stock) }} {{ $product->unit }}</p>

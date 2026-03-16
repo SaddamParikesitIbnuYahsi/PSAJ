@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-<title>{{ config('app.name', 'Stockify') }} - Login</title>
+<title>{{ config('app.name', 'Bindo Umroh') }} - Login</title>
 @section('page-description', 'Silakan masuk dengan kredensial Anda untuk mengakses dashboard')
 
 @section('content')
