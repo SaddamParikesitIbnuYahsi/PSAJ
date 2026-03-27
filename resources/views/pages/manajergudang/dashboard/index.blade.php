@@ -107,11 +107,12 @@
                 <p class="text-slate-500 text-base mb-8 leading-relaxed max-w-lg">
                     Nikmati pengalaman ibadah umrah yang nyaman dan khusyuk bersama kami. Paket lengkap dengan harga terjangkau dan pelayanan terbaik.
                 </p>
-                <div class="flex flex-col sm:flex-row gap-3 max-w-lg">
-                    <input type="email" placeholder="nama@gmail.com" class="px-6 py-4 bg-white border border-slate-200 rounded-full flex-1 focus:outline-none focus:border-brand-500 shadow-sm text-sm">
-                    <button class="px-8 py-4 bg-brand-600 text-white font-semibold rounded-full shadow-md hover:bg-brand-700 transition whitespace-nowrap">
-                        Konsultasi Gratis
-                    </button>
+                               <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="https://wa.me/6287874184220?text=Halo%20Admin%20Al%20Madinah%2C%20saya%20ingin%20konsultasi%20mengenai%20rencana%20ibadah%20Umrah." 
+                       target="_blank" 
+                       class="inline-flex items-center justify-center px-10 py-5 bg-brand-600 text-white font-bold rounded-full shadow-xl shadow-green-100 hover:bg-brand-700 transition transform hover:scale-105 uppercase text-sm tracking-widest gap-3">
+                        <i class="fab fa-whatsapp text-xl"></i> Konsultasi via WhatsApp
+                    </a>
                 </div>
             </div>
 
@@ -124,15 +125,9 @@
                     <div class="w-10 h-10 bg-[#E8F5E9] text-brand-600 rounded-lg flex items-center justify-center"><i class="fas fa-plane-departure"></i></div>
                     <div>
                         <p class="text-[10px] text-slate-400 font-semibold leading-none mb-1">Keberangkatan</p>
-                        <p class="text-sm font-bold text-slate-800">15 Hari Lagi</p>
+                        <p class="text-sm font-bold text-slate-800">Setiap 1-2 Bulan</p>
                     </div>
                 </div>
-                <div class="absolute bottom-10 -right-6 bg-white p-3 rounded-2xl shadow-xl flex items-center gap-3 border border-slate-100">
-                    <div class="w-10 h-10 bg-[#E8F5E9] text-brand-600 rounded-lg flex items-center justify-center"><i class="fas fa-users"></i></div>
-                    <div>
-                        <p class="text-[10px] text-slate-400 font-semibold leading-none mb-1">Jamaah Aktif</p>
-                        <p class="text-sm font-bold text-slate-800">2000+ Orang</p>
-                    </div>
                 </div>
             </div>
         </div>
@@ -140,28 +135,34 @@
 
     <!-- Stats Section -->
     <section class="py-12 bg-white">
-        <div class="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-                <div class="w-14 h-14 bg-[#E8F5E9] text-brand-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fas fa-users"></i></div>
-                <h4 class="text-3xl font-bold text-slate-900">5,000+</h4>
-                <p class="text-sm text-slate-500 mt-1">Jumlah Terlayani</p>
-            </div>
-            <div>
-                <div class="w-14 h-14 bg-[#E8F5E9] text-brand-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-2xl"><i class="far fa-calendar-alt"></i></div>
-                <h4 class="text-3xl font-bold text-slate-900">12</h4>
-                <p class="text-sm text-slate-500 mt-1">Tahun Pengalaman</p>
-            </div>
-            <div>
-                <div class="w-14 h-14 bg-[#E8F5E9] text-brand-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fas fa-star"></i></div>
-                <h4 class="text-3xl font-bold text-slate-900">4,9</h4>
-                <p class="text-sm text-slate-500 mt-1">Rating Kepuasan</p>
-            </div>
-            <div>
-                <div class="w-14 h-14 bg-[#E8F5E9] text-brand-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fas fa-certificate"></i></div>
-                <h4 class="text-3xl font-bold text-slate-900">100%</h4>
-                <p class="text-sm text-slate-500 mt-1">Resmi & Legal</p>
-            </div>
+        <section class="py-12 bg-white border-b border-slate-100">
+    <div class="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <!-- Fokus pada jumlah pendaftar aktif -->
+        <div>
+            <div class="w-14 h-14 bg-[#E8F5E9] text-brand-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fas fa-users"></i></div>
+            <h4 class="text-3xl font-black text-slate-900">100+</h4>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Jamaah Amanah</p>
         </div>
+        <!-- Daripada menulis 1 tahun, lebih baik tulis Keberangkatan Sukses -->
+        <div>
+            <div class="w-14 h-14 bg-[#E8F5E9] text-brand-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fas fa-plane-departure"></i></div>
+            <h4 class="text-3xl font-black text-slate-900">100%</h4>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Keberangkatan Sukses</p>
+        </div>
+        <!-- Menonjolkan rating -->
+        <div>
+            <div class="w-14 h-14 bg-[#E8F5E9] text-brand-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fas fa-star"></i></div>
+            <h4 class="text-3xl font-black text-slate-900">5.0</h4>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Rating Kepuasan</p>
+        </div>
+        <!-- Legalitas adalah kunci -->
+        <div>
+            <div class="w-14 h-14 bg-[#E8F5E9] text-brand-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fas fa-user-shield"></i></div>
+            <h4 class="text-3xl font-black text-slate-900">PPIU</h4>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Resmi Terdaftar</p>
+        </div>
+    </div>
+</section>
     </section>
 
     <!-- Paket Umrah Section (LOGIC ROUTING ASLI DIPERTAHANKAN) -->
@@ -237,90 +238,101 @@
     </section>
 
     <!-- Layanan Unggulan Section -->
-    <section id="fasilitas" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Layanan Unggulan Kami</h2>
-                <p class="text-slate-500 text-sm">Fasilitas terbaik yang kami siapkan untuk menunjang kelancaran ibadah di tanah</p>
+   <section id="fasilitas" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-4 tracking-tighter">Layanan Unggulan Kami</h2>
+            <p class="text-slate-500 text-sm font-medium">Fasilitas terbaik yang kami siapkan untuk menunjang kelancaran ibadah Anda di Tanah Suci</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Layanan 1: Pendamping Ibadah -->
+            <div class="p-8 bg-[#F4FCF6] rounded-[2rem] flex flex-col border border-emerald-50 transition hover:shadow-lg">
+                <div class="w-12 h-12 bg-emerald-600 text-white rounded-xl flex items-center justify-center mb-6 text-xl shadow-lg shadow-emerald-100"><i class="fas fa-user-friends"></i></div>
+                <h5 class="text-xl font-black text-slate-900 mb-1">Pendamping Ibadah</h5>
+                <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-4">Muthowif & Muthowifah</p>
+                <p class="text-sm text-slate-500 leading-relaxed mb-6 flex-1">Bimbingan dari mentor agama profesional yang mendampingi jamaah sepanjang ibadah Umroh dengan penuh perhatian sesuai Sunnah.</p>
+                <ul class="space-y-3 mb-8 text-[11px] text-slate-600 font-bold uppercase tracking-tight">
+                    <li class="flex items-center"><i class="fas fa-check-circle text-emerald-500 mr-2 text-sm"></i> Penjelasan manasik & doa</li>
+                    <li class="flex items-center"><i class="fas fa-check-circle text-emerald-500 mr-2 text-sm"></i> Pendampingan di Tanah Suci</li>
+                </ul>
+                <a href="https://wa.me/6287874184220?text=Halo%20Admin%20Al%20Madinah%2C%20saya%20ingin%20tanya%20detail%20mengenai%20Pendamping%20Ibadah." target="_blank" class="flex items-center text-xs font-black text-emerald-600 hover:text-emerald-700 transition uppercase tracking-widest">
+                    Hubungi Kami <i class="fab fa-whatsapp ml-2 text-lg"></i>
+                </a>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Layanan 1 -->
-                <div class="p-8 bg-[#F4FCF6] rounded-2xl flex flex-col">
-                    <div class="w-12 h-12 bg-brand-600 text-white rounded-lg flex items-center justify-center mb-5 text-xl"><i class="fas fa-user-friends"></i></div>
-                    <h5 class="text-xl font-bold text-slate-900 mb-1">Pendamping Ibadah</h5>
-                    <p class="text-[11px] text-slate-400 mb-4">(Muthowif & Muthowifah)</p>
-                    <p class="text-sm text-slate-600 mb-6 flex-1">Bimbingan dari mentor agama profesional yang menadampingi jamaah sepanajng ibadah Umrah dengan penuh perhatian.</p>
-                    <ul class="space-y-2 mb-8 text-xs text-slate-600 font-medium">
-                        <li><i class="fas fa-check text-brand-600 mr-2"></i> Penjelasan tata cara manasik & doa</li>
-                        <li><i class="fas fa-check text-brand-600 mr-2"></i> Pendampingan Ibadah di Makkah & Madinah</li>
-                        <li><i class="fas fa-check text-brand-600 mr-2"></i> Pembimbong Pria & Wanita tersedia</li>
-                    </ul>
-                    <a href="#" class="text-xs font-bold text-slate-900 hover:text-brand-600">Pelajari Selengkapnya</a>
-                </div>
 
-                <!-- Layanan 2 -->
-                <div class="p-8 bg-[#F4FCF6] rounded-2xl flex flex-col">
-                    <div class="w-12 h-12 bg-brand-600 text-white rounded-lg flex items-center justify-center mb-5 text-xl"><i class="fas fa-plane"></i></div>
-                    <h5 class="text-xl font-bold text-slate-900 mb-1">Airport Handling</h5>
-                    <p class="text-sm text-slate-600 mb-6 flex-1 mt-6">Layanan pengurusan bagasi dan chek-in di bandara untuk memastikan keberangkatan dan kedatangan yang bebas repot.</p>
-                    <ul class="space-y-2 mb-8 text-xs text-slate-600 font-medium">
-                        <li><i class="fas fa-check text-brand-600 mr-2"></i> Bantuan Chek-in & Bagasi</li>
-                        <li><i class="fas fa-check text-brand-600 mr-2"></i> Lounge Bandara Ekslusif</li>
-                    </ul>
-                    <a href="#" class="text-xs font-bold text-slate-900 hover:text-brand-600 mt-auto">Pelajari Selengkapnya</a>
-                </div>
+            <!-- Layanan 2: Airport Handling -->
+            <div class="p-8 bg-[#F4FCF6] rounded-[2rem] flex flex-col border border-emerald-50 transition hover:shadow-lg">
+                <div class="w-12 h-12 bg-emerald-600 text-white rounded-xl flex items-center justify-center mb-6 text-xl shadow-lg shadow-emerald-100"><i class="fas fa-plane"></i></div>
+                <h5 class="text-xl font-black text-slate-900 mb-6">Airport Handling</h5>
+                <p class="text-sm text-slate-500 leading-relaxed mb-6 flex-1">Layanan pengurusan bagasi dan check-in di bandara untuk memastikan keberangkatan dan kedatangan yang bebas repot.</p>
+                <ul class="space-y-3 mb-8 text-[11px] text-slate-600 font-bold uppercase tracking-tight">
+                    <li class="flex items-center"><i class="fas fa-check-circle text-emerald-500 mr-2 text-sm"></i> Bantuan Check-in & Bagasi</li>
+                    <li class="flex items-center"><i class="fas fa-check-circle text-emerald-500 mr-2 text-sm"></i> Lounge Bandara Eksklusif</li>
+                </ul>
+                <a href="https://wa.me/6287874184220?text=Halo%20Admin%20Al%20Madinah%2C%20saya%20ingin%20tanya%20detail%20mengenai%20Airport%20Handling." target="_blank" class="flex items-center text-xs font-black text-emerald-600 hover:text-emerald-700 transition uppercase tracking-widest mt-auto">
+                    Hubungi Kami <i class="fab fa-whatsapp ml-2 text-lg"></i>
+                </a>
+            </div>
 
-                <!-- Layanan 3 -->
-                <div class="p-8 bg-[#F4FCF6] rounded-2xl flex flex-col">
-                    <div class="w-12 h-12 bg-brand-600 text-white rounded-lg flex items-center justify-center mb-5 text-xl"><i class="fas fa-bus"></i></div>
-                    <h5 class="text-xl font-bold text-slate-900 mb-1">Transportasi AC</h5>
-                    <p class="text-sm text-slate-600 mb-6 flex-1 mt-6">Armada bus terbaru dengan fasilitas AC dan toilet yang nyaman untuk perjalanan antar kota di Arab Saudi.</p>
-                    <ul class="space-y-2 mb-8 text-xs text-slate-600 font-medium">
-                        <li><i class="fas fa-check text-brand-600 mr-2"></i> Bus VIP Terbaru</li>
-                        <li><i class="fas fa-check text-brand-600 mr-2"></i> Driver Berpengalaman</li>
-                    </ul>
-                    <a href="#" class="text-xs font-bold text-slate-900 hover:text-brand-600 mt-auto">Pelajari Selengkapnya</a>
-                </div>
+            <!-- Layanan 3: Transportasi AC -->
+            <div class="p-8 bg-[#F4FCF6] rounded-[2rem] flex flex-col border border-emerald-50 transition hover:shadow-lg">
+                <div class="w-12 h-12 bg-emerald-600 text-white rounded-xl flex items-center justify-center mb-6 text-xl shadow-lg shadow-emerald-100"><i class="fas fa-bus"></i></div>
+                <h5 class="text-xl font-black text-slate-900 mb-6">Transportasi AC</h5>
+                <p class="text-sm text-slate-500 leading-relaxed mb-6 flex-1">Armada bus terbaru dengan fasilitas AC dan interior nyaman untuk perjalanan antar kota yang aman di Arab Saudi.</p>
+                <ul class="space-y-3 mb-8 text-[11px] text-slate-600 font-bold uppercase tracking-tight">
+                    <li class="flex items-center"><i class="fas fa-check-circle text-emerald-500 mr-2 text-sm"></i> Bus VIP & Eksekutif</li>
+                    <li class="flex items-center"><i class="fas fa-check-circle text-emerald-500 mr-2 text-sm"></i> Driver Berpengalaman</li>
+                </ul>
+                <a href="https://wa.me/6287874184220?text=Halo%20Admin%20Al%20Madinah%2C%20saya%20ingin%20tanya%20detail%20mengenai%20Transportasi%20Bus." target="_blank" class="flex items-center text-xs font-black text-emerald-600 hover:text-emerald-700 transition uppercase tracking-widest mt-auto">
+                    Hubungi Kami <i class="fab fa-whatsapp ml-2 text-lg"></i>
+                </a>
+            </div>
 
-                <!-- Layanan 4 -->
-                <div class="p-8 bg-[#F4FCF6] rounded-2xl flex flex-col">
-                    <div class="w-12 h-12 bg-brand-600 text-white rounded-lg flex items-center justify-center mb-5 text-xl"><i class="fas fa-utensils"></i></div>
-                    <h5 class="text-xl font-bold text-slate-900 mb-1">Catering Services</h5>
-                    <p class="text-sm text-slate-600 mb-6 flex-1 mt-6">Sajian menu makanan Indonesia yang lezat dan bergizi untuk menjaga stamina jamaah selama beribadah.</p>
-                    <ul class="space-y-2 mb-8 text-xs text-slate-600 font-medium">
-                        <li><i class="fas fa-check text-brand-600 mr-2"></i> Menu Cita Rasa Nusantara</li>
-                        <li><i class="fas fa-check text-brand-600 mr-2"></i> Prasmanan 3x Sehari</li>
-                    </ul>
-                    <a href="#" class="text-xs font-bold text-slate-900 hover:text-brand-600 mt-auto">Pelajari Selengkapnya</a>
-                </div>
+            <!-- Layanan 4: Catering Services -->
+            <div class="p-8 bg-[#F4FCF6] rounded-[2rem] flex flex-col border border-emerald-50 transition hover:shadow-lg">
+                <div class="w-12 h-12 bg-emerald-600 text-white rounded-xl flex items-center justify-center mb-6 text-xl shadow-lg shadow-emerald-100"><i class="fas fa-utensils"></i></div>
+                <h5 class="text-xl font-black text-slate-900 mb-6">Katering Halal</h5>
+                <p class="text-sm text-slate-500 leading-relaxed mb-6 flex-1">Sajian menu makanan Indonesia yang lezat, sehat, dan bergizi untuk menjaga stamina jamaah selama beribadah.</p>
+                <ul class="space-y-3 mb-8 text-[11px] text-slate-600 font-bold uppercase tracking-tight">
+                    <li class="flex items-center"><i class="fas fa-check-circle text-emerald-500 mr-2 text-sm"></i> Menu Cita Rasa Nusantara</li>
+                    <li class="flex items-center"><i class="fas fa-check-circle text-emerald-500 mr-2 text-sm"></i> Prasmanan 3x Sehari</li>
+                </ul>
+                <a href="https://wa.me/6287874184220?text=Halo%20Admin%20Al%20Madinah%2C%20saya%20ingin%20tanya%20detail%20mengenai%20Konsumsi%20Katering." target="_blank" class="flex items-center text-xs font-black text-emerald-600 hover:text-emerald-700 transition uppercase tracking-widest mt-auto">
+                    Hubungi Kami <i class="fab fa-whatsapp ml-2 text-lg"></i>
+                </a>
+            </div>
 
-                <!-- Layanan 5 -->
-                <div class="p-8 bg-[#F4FCF6] rounded-2xl flex flex-col">
-                    <div class="w-12 h-12 bg-brand-600 text-white rounded-lg flex items-center justify-center mb-5 text-xl"><i class="fas fa-hotel"></i></div>
-                    <h5 class="text-xl font-bold text-slate-900 mb-1">Hotel Reservation</h5>
-                    <p class="text-sm text-slate-600 mb-6 flex-1 mt-6">Akomondasi hotel berbintang yang dekat dengan Masjidil Haram dan Masjid Nabawi untuk kenyamanan istirahat Anda.</p>
-                    <ul class="space-y-2 mb-8 text-xs text-slate-600 font-medium">
-                        <li><i class="fas fa-check text-brand-600 mr-2"></i> Hotel Bintang 4 & 5</li>
-                        <li><i class="fas fa-check text-brand-600 mr-2"></i> Jarak Dekat Dengan Masjid</li>
-                    </ul>
-                    <a href="#" class="text-xs font-bold text-slate-900 hover:text-brand-600 mt-auto">Pelajari Selengkapnya</a>
-                </div>
+            <!-- Layanan 5: Hotel Reservation -->
+            <div class="p-8 bg-[#F4FCF6] rounded-[2rem] flex flex-col border border-emerald-50 transition hover:shadow-lg">
+                <div class="w-12 h-12 bg-emerald-600 text-white rounded-xl flex items-center justify-center mb-6 text-xl shadow-lg shadow-emerald-100"><i class="fas fa-hotel"></i></div>
+                <h5 class="text-xl font-black text-slate-900 mb-6">Hotel Berbintang</h5>
+                <p class="text-sm text-slate-500 leading-relaxed mb-6 flex-1">Akomodasi hotel pilihan yang sangat dekat dengan Masjidil Haram dan Masjid Nabawi untuk kenyamanan istirahat Anda.</p>
+                <ul class="space-y-3 mb-8 text-[11px] text-slate-600 font-bold uppercase tracking-tight">
+                    <li class="flex items-center"><i class="fas fa-check-circle text-emerald-500 mr-2 text-sm"></i> Hotel Bintang 4 & 5</li>
+                    <li class="flex items-center"><i class="fas fa-check-circle text-emerald-500 mr-2 text-sm"></i> Jarak Sangat Dekat Masjid</li>
+                </ul>
+                <a href="https://wa.me/6287874184220?text=Halo%20Admin%20Al%20Madinah%2C%20saya%20ingin%20tanya%20detail%20mengenai%20Fasilitas%20Hotel." target="_blank" class="flex items-center text-xs font-black text-emerald-600 hover:text-emerald-700 transition uppercase tracking-widest mt-auto">
+                    Hubungi Kami <i class="fab fa-whatsapp ml-2 text-lg"></i>
+                </a>
+            </div>
 
-                <!-- Layanan 6 -->
-                <div class="p-8 bg-[#F4FCF6] rounded-2xl flex flex-col">
-                    <div class="w-12 h-12 bg-brand-600 text-white rounded-lg flex items-center justify-center mb-5 text-xl"><i class="fas fa-file-alt"></i></div>
-                    <h5 class="text-xl font-bold text-slate-900 mb-1">Visa Handling</h5>
-                    <p class="text-sm text-slate-600 mb-6 flex-1 mt-6">Pengurusan visa Umrah yang cepat dan terjamin legalitasnya melalui provider resmi terpercaya</p>
-                    <ul class="space-y-2 mb-8 text-xs text-slate-600 font-medium">
-                        <li><i class="fas fa-check text-brand-600 mr-2"></i> Proses Cepat & Mudah</li>
-                        <li><i class="fas fa-check text-brand-600 mr-2"></i> Jaminan Visa Approved</li>
-                    </ul>
-                    <a href="#" class="text-xs font-bold text-slate-900 hover:text-brand-600 mt-auto">Pelajari Selengkapnya</a>
-                </div>
+            <!-- Layanan 6: Visa Handling -->
+            <div class="p-8 bg-[#F4FCF6] rounded-[2rem] flex flex-col border border-emerald-50 transition hover:shadow-lg">
+                <div class="w-12 h-12 bg-emerald-600 text-white rounded-xl flex items-center justify-center mb-6 text-xl shadow-lg shadow-emerald-100"><i class="fas fa-file-alt"></i></div>
+                <h5 class="text-xl font-black text-slate-900 mb-6">Visa Umroh</h5>
+                <p class="text-sm text-slate-500 leading-relaxed mb-6 flex-1">Pengurusan visa Umroh yang cepat dan terjamin legalitasnya melalui provider resmi Kemenag yang terpercaya.</p>
+                <ul class="space-y-3 mb-8 text-[11px] text-slate-600 font-bold uppercase tracking-tight">
+                    <li class="flex items-center"><i class="fas fa-check-circle text-emerald-500 mr-2 text-sm"></i> Proses Cepat & Aman</li>
+                    <li class="flex items-center"><i class="fas fa-check-circle text-emerald-500 mr-2 text-sm"></i> Jaminan Izin Resmi</li>
+                </ul>
+                <a href="https://wa.me/6287874184220?text=Halo%20Admin%20Al%20Madinah%2C%20saya%20ingin%20tanya%20detail%20mengenai%20Proses%20Visa." target="_blank" class="flex items-center text-xs font-black text-emerald-600 hover:text-emerald-700 transition uppercase tracking-widest mt-auto">
+                    Hubungi Kami <i class="fab fa-whatsapp ml-2 text-lg"></i>
+                </a>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- Testimoni Section -->
     <section id="testimoni" class="py-20 bg-[#F8FDF9]">
@@ -377,14 +389,14 @@
             <h3 class="text-3xl md:text-4xl font-bold mb-4 text-white">Siap Berangkat Umrah?</h3>
             <p class="mb-10 text-[#E8F5E9] text-sm">Wujudkan impian ibadah umrah Anda bersama kami. Dapatkan konsultasi gratis dan penawara terbaik!</p>
             
-            <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto mb-8">
-                <input type="email" placeholder="nama@gmail.com" class="px-6 py-4 rounded-full text-slate-800 flex-1 focus:outline-none text-sm">
-                <button class="px-8 py-4 bg-white text-brand-600 font-bold rounded-full hover:bg-slate-100 transition shadow-md whitespace-nowrap text-sm">
-                    Konsultasi Gratis
-                </button>
-            </div>
-            <p class="text-sm text-white">Atau hubingi kami di WhatsApp <span class="font-bold">+62 821-3581-0572</span></p>
-        </div>
+            <div class="flex justify-center">
+                    <a href="https://wa.me/6287874184220?text=Halo%20Admin%20Al%20Madinah%2C%20saya%20ingin%20tanya%20penawaran%20terbaik%20untuk%20Umrah." 
+                       target="_blank" 
+                       class="inline-flex items-center justify-center px-12 py-5 bg-white text-brand-600 font-black rounded-full hover:bg-slate-50 transition shadow-xl uppercase text-sm tracking-[0.2em] gap-3">
+                        <i class="fab fa-whatsapp text-xl"></i> Tanya Penawaran via WA
+                    </a>
+                </div>
+                <p class="mt-12 text-[10px] font-black text-white/50 uppercase tracking-[0.4em]">Official WhatsApp: +62 878-7418-4220</p>
     </section>
 
     <!-- Main Footer (LOGIC ASLI DIPERTAHANKAN) -->

@@ -188,8 +188,8 @@
                         </p>
                         <div class="p-3 mb-3 text-sm font-bold bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-800 rounded-lg">
                             BANK BSI (Syariah)<br>
-                            No. Rekening: <span class="font-black">1234 5678 9012</span><br>
-                            a.n. <span class="font-black">PT Al Madinah Haromain Travel</span>
+                            No. Rekening: <span class="font-black">1800018099996</span><br>
+                            a.n. <span class="font-black">IMADINAH HAROMAIN TO</span>
                         </div>
                         <p class="mb-2">
                             Setelah transfer, <span class="font-bold">wajib upload bukti pembayaran</span> di form sebelah kanan.
