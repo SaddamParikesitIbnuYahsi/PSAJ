@@ -75,12 +75,9 @@
             </div>
 
             <div class="flex items-center space-x-4">
-                <button onclick="toggleModal(true)" class="text-sm font-bold text-slate-600 hover:text-brand-600 transition px-4">
+                <button onclick="toggleModal(true)" class="bg-brand-600 text-white px-6 py-3 rounded-full text-sm font-bold shadow-lg shadow-green-200 hover:bg-brand-700 transition transform hover:-translate-y-1"">
                     Masuk
                 </button>
-                <a href="{{ route('register') }}" class="bg-brand-600 text-white px-6 py-3 rounded-full text-sm font-bold shadow-lg shadow-green-200 hover:bg-brand-700 transition transform hover:-translate-y-1">
-                    Daftar Akun
-                </a>
             </div>
         </div>
     </nav>
