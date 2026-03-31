@@ -100,7 +100,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('suppliers/{id}', [SupplierController::class, 'show']);
 
         // Stock Management - Full CRUD (main responsibility)
-        Route::apiResource('stock-transactions', StockTransactionController::class);
+        Route::apiResource('stock-transactions', StockTransactionController::class)->names('manager.stock-transactions');
         Route::get('stock-transactions/type/{type}', [StockTransactionController::class, 'filterByType']);
         Route::patch('stock-transactions/{id}/approve', [StockTransactionController::class, 'approve']);
         Route::post('stock-transactions/{id}/confirm', [StockTransactionController::class, 'confirm']);
