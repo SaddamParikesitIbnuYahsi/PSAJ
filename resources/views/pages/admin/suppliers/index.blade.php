@@ -9,14 +9,14 @@
         <div class="relative p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div class="space-y-2">
                 <nav class="flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">
-                    <a href="{{ route('admin.dashboard') }}" class="hover:text-emerald-600">Dashboard</a>
-                    <i class="fas fa-chevron-right text-[8px]"></i>
+                    <a href="{{ route('admin.dashboard') }}" class="hover:text-emerald-600 transition">Dashboard</a>
+                    <i class="fas fa-chevron-right text-[8px] text-slate-300"></i>
                     <span class="text-emerald-600">Mitra Kerja</span>
                 </nav>
-                <h1 class="text-3xl font-black text-slate-800 dark:text-white">
+                <h1 class="text-3xl font-black text-slate-800 dark:text-white leading-tight">
                     Daftar Mitra & Agen Cabang
                 </h1>
-                <p class="text-sm text-slate-500 font-medium italic">Kelola jaringan agen pendaftaran dan partner logistik Umroh</p>
+                <p class="text-sm font-medium text-slate-500 italic">Kelola jaringan agen pendaftaran dan partner logistik Umroh</p>
             </div>
             <a href="{{ route('admin.suppliers.create') }}"
                class="inline-flex items-center px-8 py-4 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-700 shadow-xl shadow-emerald-100 transition transform hover:-translate-y-1">
@@ -27,34 +27,39 @@
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 gap-6 mb-10 md:grid-cols-3">
-        <div class="p-6 bg-white border border-slate-100 rounded-[2rem] shadow-sm flex items-center gap-5 transition hover:shadow-md">
-            <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl font-black italic">
+        <div class="p-6 bg-white border border-slate-100 rounded-[2rem] shadow-sm flex items-center gap-5 transition hover:shadow-md group">
+            <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl font-black italic group-hover:bg-emerald-600 group-hover:text-white transition-colors shadow-sm">
                 M
             </div>
             <div>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Mitra/Agen</p>
-                <p class="text-2xl font-black text-slate-800">{{ $suppliers->total() }} Perusahaan</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Total Mitra/Agen</p>
+                <p class="text-2xl font-black text-slate-800">{{ $suppliers->total() }} <span class="text-xs text-slate-400 font-bold uppercase tracking-tighter">Perusahaan</span></p>
             </div>
         </div>
 
-        <div class="p-6 bg-white border border-slate-100 rounded-[2rem] shadow-sm flex items-center gap-5 transition hover:shadow-md">
-            <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-xl">
+        <div class="p-6 bg-white border border-slate-100 rounded-[2rem] shadow-sm flex items-center gap-5 transition hover:shadow-md group">
+            <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-xl group-hover:bg-amber-500 group-hover:text-white transition-colors shadow-sm">
                 <i class="fas fa-user-friends"></i>
             </div>
             <div>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Kontribusi Jamaah</p>
-                <p class="text-2xl font-black text-slate-800">{{ $totalProductsFromSuppliers ?? 0 }} Jamaah</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Kontribusi Jamaah</p>
+                <p class="text-2xl font-black text-slate-800">{{ $totalProductsFromSuppliers ?? 0 }} <span class="text-xs text-slate-400 font-bold uppercase tracking-tighter">Orang</span></p>
             </div>
         </div>
 
-        <div class="p-6 bg-white border border-slate-100 rounded-[2rem] shadow-sm flex items-center gap-5 transition hover:shadow-md">
-            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl">
+        <div class="p-6 bg-white border border-slate-100 rounded-[2rem] shadow-sm flex items-center gap-5 transition hover:shadow-md group border-b-4 border-b-blue-400">
+            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl group-hover:bg-blue-600 group-hover:text-white transition-colors shadow-sm">
                 <i class="fas fa-chart-line"></i>
             </div>
             <div>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Efektivitas Mitra</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Efektivitas Mitra</p>
                 <p class="text-2xl font-black text-slate-800">
-                    {{ $suppliers->count() > 0 ? round($totalProductsFromSuppliers / $suppliers->count(), 1) : 0 }} <span class="text-sm">Jamaah/Agen</span>
+                    @if($suppliers->count() > 0 && ($totalProductsFromSuppliers ?? 0) > 0)
+                        {{ round($totalProductsFromSuppliers / $suppliers->count(), 1) }}
+                    @else
+                        0
+                    @endif
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter ml-1">Jamaah/Agen</span>
                 </p>
             </div>
         </div>
@@ -63,7 +68,9 @@
     <!-- Table Section -->
     <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
         <div class="p-8 border-b border-slate-50 bg-slate-50/30 flex flex-col md:flex-row justify-between gap-4 items-center">
-            <h2 class="text-sm font-black text-slate-800 uppercase tracking-[0.2em]">Direktori Partner & Cabang</h2>
+            <h2 class="text-sm font-black text-slate-800 uppercase tracking-[0.2em] flex items-center gap-2">
+                <i class="fas fa-address-book text-emerald-600"></i> Direktori Partner & Cabang
+            </h2>
             
             <form method="GET" action="{{ route('admin.suppliers.index') }}" class="relative w-full md:w-80">
                 <i class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 fas fa-search text-xs"></i>
@@ -88,8 +95,8 @@
                         <tr class="hover:bg-slate-50/80 transition duration-150 group">
                             <td class="px-8 py-5">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center font-black group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                                        <i class="fas fa-building text-xs"></i>
+                                    <div class="w-11 h-11 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center font-black group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm">
+                                        {{ substr($supplier->name, 0, 2) }}
                                     </div>
                                     <div>
                                         <div class="text-sm font-black text-slate-800">{{ $supplier->name }}</div>
@@ -99,21 +106,33 @@
                             </td>
                             <td class="px-8 py-5">
                                 <div class="text-sm font-bold text-slate-700">{{ $supplier->contact_person }}</div>
-                                <div class="text-[10px] font-black text-emerald-500 tracking-tighter"><i class="fas fa-phone-alt mr-1"></i> {{ $supplier->phone }}</div>
+                                <div class="text-[10px] font-black text-emerald-500 tracking-tighter uppercase">
+                                    <i class="fas fa-phone-alt mr-1 text-[8px]"></i> {{ $supplier->phone }}
+                                </div>
                             </td>
                             <td class="px-8 py-5 text-center">
-                                <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded-full uppercase">
+                                <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-[9px] font-black rounded-full uppercase shadow-sm">
                                     {{ $supplier->products_count }} Jamaah
                                 </span>
                             </td>
                             <td class="px-8 py-5 text-right">
-                                <div class="flex items-center justify-end space-x-1">
-                                    <a href="{{ route('admin.suppliers.show', $supplier) }}" class="p-2 text-slate-400 hover:text-emerald-600 transition"><i class="fas fa-eye"></i></a>
-                                    <a href="{{ route('admin.suppliers.edit', $supplier) }}" class="p-2 text-slate-400 hover:text-blue-600 transition"><i class="fas fa-edit"></i></a>
+                                <div class="flex items-center justify-end gap-1">
+                                    <!-- Detail -->
+                                    <a href="{{ route('admin.suppliers.show', $supplier) }}" class="p-2 text-slate-400 hover:text-emerald-600 transition" title="Lihat Detail"><i class="fas fa-eye"></i></a>
+                                    
+                                    <!-- Edit -->
+                                    <a href="{{ route('admin.suppliers.edit', $supplier) }}" class="p-2 text-slate-400 hover:text-blue-600 transition" title="Edit Data"><i class="fas fa-edit"></i></a>
+                                    
+                                    <!-- Hapus Interaktif -->
                                     @if($supplier->products_count == 0)
-                                        <a href="{{ route('admin.suppliers.delete', $supplier) }}" class="p-2 text-slate-400 hover:text-red-600 transition"><i class="fas fa-trash"></i></a>
+                                        <a href="{{ route('admin.suppliers.delete', $supplier) }}" class="p-2 text-slate-400 hover:text-red-600 transition" title="Hapus Agen"><i class="fas fa-trash-alt"></i></a>
                                     @else
-                                        <button disabled class="p-2 text-slate-200 cursor-not-allowed"><i class="fas fa-trash"></i></button>
+                                        <button type="button" 
+                                                onclick="alert('Agen ini tidak bisa dihapus karena masih mengelola {{ $supplier->products_count }} jamaah aktif.')" 
+                                                class="p-2 text-slate-200 hover:text-amber-500 transition cursor-help" 
+                                                title="Terkunci: Memiliki data jamaah">
+                                            <i class="fas fa-lock text-xs"></i>
+                                        </button>
                                     @endif
                                 </div>
                             </td>

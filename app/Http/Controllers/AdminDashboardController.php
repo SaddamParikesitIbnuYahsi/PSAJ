@@ -29,10 +29,10 @@ class AdminDashboardController extends Controller
     public function index()
     {
         try {
-            $totalProducts = Product::count(); // Total Jamaah
-            $totalSuppliers = Supplier::count(); // Total Agen
+            $totalProducts = Product::count(); 
+            $totalSuppliers = Supplier::count(); 
             $totalUsers = User::count();
-            $totalCategories = Category::count(); // Total Paket
+            $totalCategories = Category::count(); 
 
             $chartData = ['categories' => [], 'incoming' => [], 'outgoing' => []];
             for ($i = 6; $i >= 0; $i--) {
@@ -142,6 +142,8 @@ class AdminDashboardController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'Data pengguna diperbarui');
     }
 
+    public function confirmDeleteUser(User $user) { return view('pages.admin.users.delete', compact('user')); }
+
     public function userDestroy(User $user)
     {
         if ($user->id === auth()->id()) {
@@ -184,9 +186,9 @@ class AdminDashboardController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'sku' => 'required|string|max:100|unique:products',
-            'category_id' => 'required|exists:categories,id',
-            'supplier_id' => 'nullable|exists:suppliers,id',
+            'sku' => 'required|string|max:100|unique:products', 
+            'category_id' => 'required|exists:categories,id', 
+            'supplier_id' => 'nullable|exists:suppliers,id', 
             'purchase_price' => 'required|numeric',
             'selling_price' => 'required|numeric',
             'current_stock' => 'required|integer',
@@ -215,10 +217,10 @@ class AdminDashboardController extends Controller
                 'current_stock'  => $product->current_stock,
             ]);
             DB::commit();
-            return redirect()->route('admin.products.index')->with('success', 'Jamaah berhasil didaftarkan & riwayat dicatat');
+            return redirect()->route('admin.products.index')->with('success', 'Jamaah berhasil didaftarkan');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal mendaftarkan jamaah: ' . $e->getMessage());
+            return back()->with('error', 'Gagal: ' . $e->getMessage());
         }
     }
 
@@ -243,19 +245,24 @@ class AdminDashboardController extends Controller
             $data['image'] = $request->file('image')->store('product_images', 'public');
         }
         $product->update($data);
-        return redirect()->route('admin.products.index')->with('success', 'Data jamaah berhasil diperbarui');
+        return redirect()->route('admin.products.index')->with('success', 'Data diperbarui');
     }
 
-    public function confirmDeleteProduct(Product $product)
-    {
-        return view('pages.admin.products.delete', compact('product'));
-    }
+    public function confirmDeleteProduct(Product $product) { return view('pages.admin.products.delete', compact('product')); }
 
     public function destroy(Product $product)
     {
         if ($product->image) Storage::disk('public')->delete($product->image);
         $product->delete();
-        return redirect()->route('admin.products.index')->with('success', 'Data jamaah berhasil dihapus');
+        return redirect()->route('admin.products.index')->with('success', 'Data dihapus');
+    }
+
+    public function forceDestroy($id)
+    {
+        $product = Product::withTrashed()->findOrFail($id);
+        if ($product->image) Storage::disk('public')->delete($product->image);
+        $product->forceDelete();
+        return redirect()->route('admin.products.index')->with('success', 'Data dihapus permanen');
     }
 
     // ===================================
@@ -271,9 +278,7 @@ class AdminDashboardController extends Controller
         return view('pages.admin.categories.index', compact('categories'));
     }
 
-    public function categoryCreate() { 
-        return view('pages.admin.categories.create'); 
-    }
+    public function categoryCreate() { return view('pages.admin.categories.create'); }
 
     public function categoryStore(Request $request)
     {
@@ -287,13 +292,8 @@ class AdminDashboardController extends Controller
         return redirect()->route('admin.categories.index')->with('success', 'Program paket ditambahkan');
     }
 
-    public function categoryShow(Category $category) { 
-        return view('pages.admin.categories.show', compact('category')); 
-    }
-
-    public function categoryEdit(Category $category) { 
-        return view('pages.admin.categories.edit', compact('category')); 
-    }
+    public function categoryShow(Category $category) { return view('pages.admin.categories.show', compact('category')); }
+    public function categoryEdit(Category $category) { return view('pages.admin.categories.edit', compact('category')); }
 
     public function categoryUpdate(Request $request, Category $category)
     {
@@ -301,6 +301,8 @@ class AdminDashboardController extends Controller
         $category->update($request->all());
         return redirect()->route('admin.categories.index')->with('success', 'Program diperbarui');
     }
+
+    public function confirmDeleteCategory(Category $category) { return view('pages.admin.categories.delete', compact('category')); }
 
     public function categoryDestroy(Category $category)
     {
@@ -310,40 +312,30 @@ class AdminDashboardController extends Controller
 
     public function berangkatkanPaket(Category $category)
     {
-        $jamaahAktif = Product::where('category_id', $category->id)
-                             ->where('current_stock', '>', 0)
-                             ->get();
-
-        if ($jamaahAktif->isEmpty()) {
-            return back()->with('warning', 'Tidak ada jamaah aktif dalam paket ini.');
-        }
+        $jamaahAktif = Product::where('category_id', $category->id)->where('current_stock', '>', 0)->get();
+        if ($jamaahAktif->isEmpty()) return back()->with('warning', 'Tidak ada jamaah aktif.');
 
         DB::beginTransaction();
         try {
             foreach ($jamaahAktif as $jamaah) {
-                $jumlah = $jamaah->current_stock;
-                $previousStock = $jamaah->current_stock;
-
                 StockTransaction::create([
-                    'product_id'     => $jamaah->id,
-                    'user_id'        => Auth::id(),
-                    'type'           => 'Keluar',
-                    'quantity'       => $jumlah,
-                    'date'           => now(),
-                    'status'         => 'Dikeluarkan',
-                    'notes'          => 'Keberangkatan Massal Paket: ' . $category->name,
-                    'previous_stock' => $previousStock,
-                    'current_stock'  => 0
+                    'product_id' => $jamaah->id,
+                    'user_id' => Auth::id(),
+                    'type' => 'Keluar',
+                    'quantity' => $jamaah->current_stock,
+                    'date' => now(),
+                    'status' => 'Dikeluarkan',
+                    'notes' => 'Keberangkatan Massal: ' . $category->name,
+                    'previous_stock' => $jamaah->current_stock,
+                    'current_stock' => 0
                 ]);
-
                 $jamaah->update(['current_stock' => 0]);
             }
-
             DB::commit();
-            return back()->with('success', 'Seluruh jamaah dalam paket ' . $category->name . ' telah berhasil diberangkatkan.');
+            return back()->with('success', 'Berhasil memberangkatkan jamaah.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal memproses keberangkatan: ' . $e->getMessage());
+            return back()->with('error', 'Gagal.');
         }
     }
 
@@ -357,7 +349,10 @@ class AdminDashboardController extends Controller
             $query->where('name', 'like', "%{$request->search}%");
         }
         $suppliers = $query->paginate(10);
-        $totalProductsFromSuppliers = Supplier::count();
+        
+        // MENAMBAHKAN VARIABEL YANG HILANG:
+        $totalProductsFromSuppliers = Product::whereNotNull('supplier_id')->count(); 
+
         return view('pages.admin.suppliers.index', compact('suppliers', 'totalProductsFromSuppliers'));
     }
 
@@ -375,6 +370,12 @@ class AdminDashboardController extends Controller
         return redirect()->route('admin.suppliers.index')->with('success', 'Mitra ditambahkan');
     }
 
+    public function supplierShow(Supplier $supplier) 
+    { 
+        $supplier->load('products');
+        return view('pages.admin.suppliers.show', compact('supplier')); 
+    }
+
     public function supplierEdit(Supplier $supplier) { return view('pages.admin.suppliers.edit', compact('supplier')); }
 
     public function supplierUpdate(Request $request, Supplier $supplier)
@@ -382,6 +383,8 @@ class AdminDashboardController extends Controller
         $supplier->update($request->all());
         return redirect()->route('admin.suppliers.index')->with('success', 'Data mitra diperbarui');
     }
+
+    public function confirmDeleteSupplier(Supplier $supplier) { return view('pages.admin.suppliers.delete', compact('supplier')); }
 
     public function supplierDestroy(Supplier $supplier)
     {
@@ -394,114 +397,57 @@ class AdminDashboardController extends Controller
     // ===================================
     public function reportStock(Request $request)
     {
-        // Query utama untuk tabel
         $query = Product::with('category');
-
-        // Filter program (kategori)
-        if ($request->filled('category_id')) {
-            $query->where('category_id', $request->category_id);
-        }
-
-        // Filter status kuota
-        if ($request->filled('stock_status')) {
-            switch ($request->stock_status) {
-                case 'low':
-                    $query->where('current_stock', '>', 0)
-                          ->whereColumn('current_stock', '<=', 'min_stock');
-                    break;
-                case 'out':
-                    $query->where('current_stock', '<=', 0);
-                    break;
-                case 'safe':
-                    $query->whereColumn('current_stock', '>', 'min_stock');
-                    break;
-            }
-        }
-
+        if ($request->filled('category_id')) $query->where('category_id', $request->category_id);
         $products = $query->paginate(20);
-
-        // Summary kartu atas (dihitung ulang, mengikuti filter program saja)
-        $summaryBase = Product::query();
-        if ($request->filled('category_id')) {
-            $summaryBase->where('category_id', $request->category_id);
-        }
-
         $stockSummary = [
-            'safe' => (clone $summaryBase)
-                ->whereColumn('current_stock', '>', 'min_stock')
-                ->count(),
-            'low' => (clone $summaryBase)
-                ->where('current_stock', '>', 0)
-                ->whereColumn('current_stock', '<=', 'min_stock')
-                ->count(),
-            'out' => (clone $summaryBase)
-                ->where('current_stock', '<=', 0)
-                ->count(),
+            'safe' => Product::whereColumn('current_stock', '>', 'min_stock')->count(),
+            'low' => Product::where('current_stock', '>', 0)->whereColumn('current_stock', '<=', 'min_stock')->count(),
+            'out' => Product::where('current_stock', '<=', 0)->count(),
         ];
-
         $categories = Category::all();
-
         return view('pages.admin.reports.stock', compact('products', 'categories', 'stockSummary'));
     }
 
     public function reportTransactions()
     {
-        $transactions = StockTransaction::with(['product', 'user', 'supplier'])
-            ->orderBy('date', 'desc')
-            ->paginate(20);
+        $transactions = StockTransaction::with(['product', 'user', 'supplier'])->orderBy('date', 'desc')->paginate(20);
         return view('pages.admin.reports.transactions', compact('transactions'));
     }
 
     public function reportSystem()
     {
         $systemData = [
-            'total_users' => User::count(),
-            'total_jamaah' => Product::count(),
-            'total_paket' => Category::count(),
-            'total_agen' => Supplier::count(),
-            'total_transaksi' => StockTransaction::count(),
+            'total_users' => User::count(), 'total_jamaah' => Product::count(), 'total_paket' => Category::count(), 'total_agen' => Supplier::count(), 'total_transaksi' => StockTransaction::count(),
         ];
         return view('pages.admin.reports.system', compact('systemData'));
     }
 
-    public function profile()
-    {
-        return view('pages.profile.edit', ['user' => Auth::user()]);
-    }
+    public function profile() { return view('pages.profile.edit', ['user' => Auth::user()]); }
 
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
-
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photo' => 'nullable|image|max:2048',
             'current_password' => 'nullable|required_with:new_password',
             'new_password' => 'nullable|min:8|confirmed',
         ]);
 
         $user->name = $request->name;
         $user->email = $request->email;
-
         if ($request->hasFile('photo')) {
-            if ($user->profile_photo_path) {
-                Storage::disk('public')->delete($user->profile_photo_path);
-            }
-            $path = $request->file('photo')->store('profile-photos', 'public');
-            $user->profile_photo_path = $path;
+            if ($user->profile_photo_path) Storage::disk('public')->delete($user->profile_photo_path);
+            $user->profile_photo_path = $request->file('photo')->store('profile-photos', 'public');
         }
-
         if ($request->filled('new_password')) {
-            if (!Hash::check($request->current_password, $user->password)) {
-                return back()->withErrors(['current_password' => 'Password saat ini tidak cocok.']);
-            }
+            if (!Hash::check($request->current_password, $user->password)) return back()->withErrors(['current_password' => 'Sandi salah.']);
             $user->password = Hash::make($request->new_password);
         }
-
         $user->save();
-
-        return redirect()->route('admin.profile')->with('success', 'Profil berhasil diperbarui.');
+        return redirect()->route('admin.profile')->with('success', 'Profil diperbarui.');
     }
 
     public function export(Request $request) { return Excel::download(new ProductsExport($request), 'manifest-jamaah.xlsx'); }
@@ -511,7 +457,7 @@ class AdminDashboardController extends Controller
         $request->validate(['file' => 'required|file|mimes:xlsx,xls']);
         try {
             Excel::import(new ProductsImport, $request->file('file'));
-            return redirect()->route('admin.products.index')->with('success', 'Data jamaah berhasil diimpor');
+            return redirect()->route('admin.products.index')->with('success', 'Impor berhasil');
         } catch (\Exception $e) {
             return redirect()->route('admin.products.index')->with('error', 'Gagal impor data jamaah');
         }

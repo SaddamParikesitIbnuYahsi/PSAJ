@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Kelola Staf Biro')
+@section('title', 'Kelola Staf & Pengguna')
 
 @section('content')
     <!-- Header Section with Emerald Gradient -->
@@ -11,7 +11,7 @@
             <nav class="flex items-center mb-6 space-x-2 text-[10px] font-black uppercase tracking-[0.2em]">
                 <a href="{{ route('admin.dashboard') }}" class="text-slate-400 hover:text-emerald-600 transition">Dashboard</a>
                 <i class="fas fa-chevron-right text-[8px] text-slate-300"></i>
-                <span class="text-emerald-600">Manajemen Staf</span>
+                <span class="text-emerald-600">Manajemen Pengguna</span>
             </nav>
 
             <!-- Title Section -->
@@ -22,13 +22,13 @@
                         Kelola Pengguna Sistem
                     </h1>
                     <p class="text-sm font-medium text-slate-500 italic">
-                        Manajemen hak akses administrator dan tim operasional biro umroh
+                        Manajemen hak akses administrator, staf operasional, dan akun jamaah (user)
                     </p>
                 </div>
                 <a href="{{ route('admin.users.create') }}"
                    class="inline-flex items-center px-8 py-4 bg-emerald-600 text-white font-black rounded-2xl hover:bg-emerald-700 shadow-xl shadow-emerald-100 transition transform hover:-translate-y-1">
                     <i class="fas fa-user-plus mr-2"></i>
-                    <span>Tambah Staf Baru</span>
+                    <span>Tambah Akun Baru</span>
                 </a>
             </div>
         </div>
@@ -60,16 +60,16 @@
             <p class="text-2xl font-black text-slate-800">{{ $users->where('role', 'Admin')->count() }}</p>
         </div>
 
-        <!-- Manager Card -->
+        <!-- User/Jamaah Card (DIUBAH DISINI) -->
         <div class="p-6 bg-white border border-slate-100 rounded-[2rem] shadow-sm transition hover:shadow-md border-b-4 border-b-blue-400">
             <div class="flex items-center justify-between mb-4">
                 <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
-                    <i class="fas fa-user-tie"></i>
+                    <i class="fas fa-user"></i>
                 </div>
                 <span class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Akses</span>
             </div>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Manajer Operasional</p>
-            <p class="text-2xl font-black text-slate-800">{{ $users->where('role', 'Manajer Operasional')->count() }}</p>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Akun User / Jamaah</p>
+            <p class="text-2xl font-black text-slate-800">{{ $users->where('role', 'User')->count() }}</p>
         </div>
 
         <!-- Staff Card -->
@@ -101,7 +101,8 @@
                     </div>
                     <select name="role" class="px-4 py-2.5 bg-white border-none rounded-xl shadow-inner focus:ring-2 focus:ring-emerald-500 text-sm font-bold text-slate-600">
                         <option value="">Semua Jabatan</option>
-                        @foreach(['Admin', 'Manajer Operasional', 'Staf Registrasi'] as $role)
+                        {{-- DIUBAH DISINI --}}
+                        @foreach(['Admin', 'User', 'Staf Registrasi'] as $role)
                             <option value="{{ $role }}" {{ request('role') == $role ? 'selected' : '' }}>{{ $role }}</option>
                         @endforeach
                     </select>
@@ -114,9 +115,9 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">
-                        <th class="px-8 py-5">Informasi Staf</th>
+                        <th class="px-8 py-5">Informasi Pengguna</th>
                         <th class="px-8 py-5">Jabatan / Role</th>
-                        <th class="px-8 py-5">Status</th>
+                        <th class="px-8 py-5">Status Akun</th>
                         <th class="px-8 py-5">Waktu Bergabung</th>
                         <th class="px-8 py-5 text-right">Aksi</th>
                     </tr>
@@ -136,8 +137,9 @@
                                 </div>
                             </td>
                             <td class="px-8 py-5">
+                                {{-- LOGIKA STYLE DIUBAH DISINI --}}
                                 @php
-                                    $roleStyle = $user->role == 'Admin' ? 'bg-red-50 text-red-600' : ($user->role == 'Manajer Operasional' ? 'bg-blue-50 text-blue-600' : 'bg-emerald-50 text-emerald-600');
+                                    $roleStyle = $user->role == 'Admin' ? 'bg-red-50 text-red-600' : ($user->role == 'User' ? 'bg-blue-50 text-blue-600' : 'bg-emerald-50 text-emerald-600');
                                 @endphp
                                 <span class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tighter {{ $roleStyle }}">
                                     {{ $user->role }}
@@ -153,9 +155,9 @@
                             </td>
                             <td class="px-8 py-5 text-right">
                                 <div class="flex items-center justify-end space-x-1">
-                                    <a href="{{ route('admin.users.show', $user) }}" class="p-2 text-slate-400 hover:text-emerald-600 transition"><i class="fas fa-eye"></i></a>
-                                    <a href="{{ route('admin.users.edit', $user) }}" class="p-2 text-slate-400 hover:text-blue-600 transition"><i class="fas fa-edit"></i></a>
-                                    <a href="{{ route('admin.users.delete', $user) }}" class="p-2 text-slate-400 hover:text-red-600 transition"><i class="fas fa-trash-alt"></i></a>
+                                    <a href="{{ route('admin.users.show', $user) }}" class="p-2 text-slate-400 hover:text-emerald-600 transition" title="Lihat"><i class="fas fa-eye"></i></a>
+                                    <a href="{{ route('admin.users.edit', $user) }}" class="p-2 text-slate-400 hover:text-blue-600 transition" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a href="{{ route('admin.users.delete', $user) }}" class="p-2 text-slate-400 hover:text-red-600 transition" title="Hapus"><i class="fas fa-trash-alt"></i></a>
                                 </div>
                             </td>
                         </tr>
