@@ -15,7 +15,7 @@ use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
-| WEB ROUTES - SISTEM MANAJEMEN UMROH (LENGKAP)
+| WEB ROUTES - SISTEM MANAJEMEN UMROH (LENGKAP & NO ERROR)
 |--------------------------------------------------------------------------
 */
 
@@ -26,7 +26,7 @@ Route::get('/', function () {
         return redirect(match ($user->role) {
             'Admin'             => route('admin.dashboard'),
             'Staf Registrasi'   => route('staff.dashboard'),
-            'User'              => route('user.dashboard'), 
+            'User'              => route('manajergudang.dashboard'), 
             default             => '/login',
         });
     }
@@ -41,7 +41,6 @@ Route::middleware('guest')->group(function () {
 
 // AUTH ACTIONS
 Route::post('/login', [AuthController::class, 'login'])->name('login.process');
-Route::post('/register', [AuthController::class, 'register'])->name('register.process');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
@@ -73,7 +72,6 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/products/{product}', [AdminDashboardController::class, 'productUpdate'])->name('products.update');
     Route::get('/products/{product}/delete', [AdminDashboardController::class, 'confirmDeleteProduct'])->name('products.confirm-delete');
     Route::delete('/products/{product}', [AdminDashboardController::class, 'destroy'])->name('products.destroy');
-    // ROUTE TAMBAHAN: FORCE DELETE JAMAAH
     Route::delete('/products/{id}/force-delete', [AdminDashboardController::class, 'forceDestroy'])->name('products.force-destroy');
 
     // --- PROGRAM PAKET (CATEGORIES) ---
@@ -105,10 +103,12 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
         Route::get('/transactions', [AdminDashboardController::class, 'reportTransactions'])->name('transactions');
     });
 
-    Route::get('/profile', [AdminDashboardController::class, 'profile'])->name('profile');
-    Route::put('/profile', [AdminDashboardController::class, 'updateProfile'])->name('profile.update');
+    // --- SETTINGS (FIXED) ---
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
     Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
+
+    Route::get('/profile', [AdminDashboardController::class, 'profile'])->name('profile');
+    Route::put('/profile', [AdminDashboardController::class, 'updateProfile'])->name('profile.update');
 });
 
 // ===================================
@@ -116,6 +116,9 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->grou
 // ===================================
 Route::middleware(['auth', 'role:Staf Registrasi'])->prefix('staff')->name('staff.')->group(function () {
     Route::get('/dashboard', [StaffDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/manifest/{product}', [StaffTaskController::class, 'showManifest'])->name('manifest.show');
+    Route::get('/manifest/{product}/print', [StaffTaskController::class, 'printManifest'])->name('manifest.print');
+    
     Route::prefix('stock')->name('stock.')->group(function () {
         Route::prefix('incoming')->name('incoming.')->group(function () {
             Route::get('/', [StaffTaskController::class, 'listIncoming'])->name('list');
@@ -128,9 +131,13 @@ Route::middleware(['auth', 'role:Staf Registrasi'])->prefix('staff')->name('staf
             Route::post('/{transaction}/dispatch', [StaffTaskController::class, 'processOutgoingDispatch'])->name('dispatch');
         });
     });
-    Route::get('/reports/incoming', [StaffReportController::class, 'showIncomingReport'])->name('reports.incoming');
-    Route::get('/reports/outgoing', [StaffReportController::class, 'showOutgoingReport'])->name('reports.outgoing');
-    Route::get('/reports/incoming/export', [StaffReportController::class, 'export'])->name('reports.export');
+
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/incoming', [StaffReportController::class, 'showIncomingReport'])->name('incoming');
+        Route::get('/outgoing', [StaffReportController::class, 'showOutgoingReport'])->name('outgoing');
+        Route::get('/incoming/export', [StaffReportController::class, 'export'])->name('export');
+        Route::get('/outgoing/export', [StaffReportController::class, 'exportDepartures'])->name('departures.export');
+    });
     
     Route::get('/profile', [StaffDashboardController::class, 'profile'])->name('profile');
     Route::put('/profile', [StaffDashboardController::class, 'updateProfile'])->name('profile.update');

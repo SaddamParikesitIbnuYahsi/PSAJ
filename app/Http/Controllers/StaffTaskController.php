@@ -40,6 +40,26 @@ class StaffTaskController extends Controller
     }
 
     /**
+     * Menampilkan rincian lengkap data jamaah (Manifest)
+     */
+    public function showManifest(Product $product): View
+    {
+        // Load relasi agar data paket, agen, dan riwayat pendaftaran muncul
+        $product->load(['category', 'supplier', 'stockTransactions.user']);
+
+        return view('pages.staff.tasks.show_manifest', compact('product'));
+    }
+
+    /**
+     * FUNGSI BARU: Menampilkan halaman cetak manifest
+     */
+    public function printManifest(Product $product): View
+    {
+        $product->load(['category', 'supplier']);
+        return view('pages.staff.tasks.print_manifest', compact('product'));
+    }
+
+    /**
      * Memproses Keberangkatan (Stok Keluar)
      */
     public function processOutgoingDispatch(Request $request, StockTransaction $transaction): RedirectResponse
@@ -91,7 +111,9 @@ class StaffTaskController extends Controller
         return view('pages.staff.tasks.list_outgoing', compact('transactions'));
     }
 
-    // Fungsi konfirmasi masuk (Pendaftaran) tetap dipertahankan
+    /**
+     * Memproses konfirmasi pendaftaran masuk
+     */
     public function processIncomingConfirmation(Request $request, StockTransaction $transaction): RedirectResponse
     {
         $request->validate([

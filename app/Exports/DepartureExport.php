@@ -11,46 +11,33 @@ class DepartureExport implements FromQuery, WithHeadings, WithMapping, ShouldAut
 {
     protected $query;
 
-    public function __construct($query)
-    {
+    public function __construct($query) {
         $this->query = $query;
     }
 
-    public function query()
-    {
+    public function query() {
         return $this->query;
     }
 
-    public function headings(): array
-    {
+    public function headings(): array {
         return [
-            'ID Transaksi',
-            'Tanggal Berangkat',
             'Nama Jamaah',
-            'No. Registrasi / Paspor',
-            'Paket',
-            'Agen',
-            'Jumlah Pax',
+            'No. Registrasi',
+            'Paket Umroh',
+            'Agen/Cabang',
             'Status',
-            'Verifikator',
-            'Catatan',
+            'Tanggal Keberangkatan (Update)'
         ];
     }
 
-    public function map($transaction): array
-    {
+    public function map($data): array {
         return [
-            $transaction->id,
-            optional($transaction->date)->format('d-m-Y H:i'),
-            optional($transaction->product)->name ?? 'N/A',
-            optional($transaction->product)->sku ?? '-',
-            optional($transaction->product->category)->name ?? '-',
-            optional($transaction->supplier)->name ?? 'Pusat',
-            $transaction->quantity,
-            $transaction->status,
-            optional($transaction->user)->name ?? 'Sistem',
-            $transaction->notes ?? '',
+            $data->name,
+            $data->sku,
+            $data->category->name ?? '-',
+            $data->supplier->name ?? 'Pusat',
+            'TELAH BERANGKAT',
+            $data->updated_at->format('d-m-Y H:i'),
         ];
     }
 }
-

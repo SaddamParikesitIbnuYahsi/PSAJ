@@ -67,7 +67,7 @@
                         <i class="fas fa-kaaba text-xl"></i>
                     </div>
                 @endif
-                <span class="text-xl font-extrabold tracking-tight text-brand-800 uppercase">Al Madinah</span>
+                <span class="text-xl font-extrabold tracking-tight text-brand-800 uppercase"></span>
             </div>
             
             <div class="hidden md:flex items-center space-x-10 text-sm font-semibold text-slate-600 uppercase tracking-wider">
@@ -254,7 +254,7 @@
                                 <i class="fas fa-kaaba text-xl"></i>
                             </div>
                         @endif
-                        <span class="text-xl font-black tracking-tighter text-slate-800 uppercase">Al Madinah</span>
+                        <span class="text-xl font-black tracking-tighter text-slate-800 uppercase"></span>
                     </div>
                     <p class="text-sm text-slate-400 leading-relaxed italic">
                         Biro perjalanan Umrah resmi yang mengedepankan keamanan dan bimbingan sesuai tuntunan Sunnah Rasulullah SAW.

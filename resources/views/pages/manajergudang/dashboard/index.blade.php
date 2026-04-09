@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wujudkan Impian Umrah Anda | {{ config('app.name') }}</title>
+    <title>Wujudkan Impian Umrah Anda</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -62,7 +62,7 @@
                         <i class="fas fa-kaaba"></i>
                     </div>
                 @endif
-                <span class="text-lg font-bold text-slate-800 uppercase tracking-tighter">{{ config('app.name') }}</span>
+                <span class="text-lg font-bold text-slate-800 uppercase tracking-tighter"></span>
             </div>
             
             <!-- Menu Navigasi -->
@@ -309,7 +309,7 @@
                             <i class="fas fa-kaaba"></i>
                         </div>
                     @endif
-                    <span class="text-lg font-bold text-slate-800 uppercase tracking-tighter">{{ config('app.name') }}</span>
+                    <span class="text-lg font-bold text-slate-800 uppercase tracking-tighter"></span>
                 </div>
                 
                 <p class="text-sm text-slate-400 leading-relaxed italic">
@@ -323,7 +323,7 @@
         </div>
         
         <div class="max-w-7xl mx-auto mt-16 pt-8 border-t border-slate-50 text-center text-[10px] font-black uppercase tracking-[0.4em] text-slate-300">
-            &copy; {{ date('Y') }} {{ config('app.name') }} | Penyelenggara Umrah Resmi Terdaftar.
+            &copy; {{ date('Y') }}| Penyelenggara Umrah Resmi Terdaftar.
         </div>
     </footer>
 

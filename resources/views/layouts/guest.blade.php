@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{{ config('app.description', 'Sistem manajemen biro umroh dan pendaftaran jamaah') }}">
 
-    <title>{{ config('app.name') }} - Biro Perjalanan Umroh</title>
+    <title>Biro Perjalanan Umroh</title>
 
     <!-- Favicon -->
     <link rel="icon" href="{{ get_favicon_url() }}" type="image/x-icon">
@@ -44,7 +44,7 @@
                             </svg>
                         </div>
                     @endif
-                    <span class="text-xl font-bold text-gray-900 dark:text-white">{{ config('app.name') }}</span>
+                    <span class="text-xl font-bold text-gray-900 dark:text-white">Umroh</span>
                 </div>
 
                 <!-- Desktop Navigation -->
@@ -225,7 +225,7 @@
             </div>
             <div class="pt-8 mt-16 border-t border-gray-700">
                 <p class="text-sm text-gray-400 md:text-center">
-                    &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
+                    &copy; {{ date('Y') }} Imadinah Haromain. All rights reserved.
                 </p>
             </div>
         </div>

@@ -49,90 +49,42 @@
     </div>
 </div>
 
-<!-- Kartu Statistik (Sinkron dengan Data Admin) -->
+<!-- Kartu Statistik -->
 <div class="grid grid-cols-1 gap-6 mb-8 md:grid-cols-4">
-    <div class="p-6 bg-white border border-slate-100 rounded-3xl shadow-sm">
-        <div class="flex items-center">
-            <div class="flex items-center justify-center w-12 h-12 bg-emerald-50 rounded-2xl text-emerald-600">
-                <i class="fas fa-user-friends"></i>
-            </div>
-            <div class="ml-4">
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Jamaah</p>
-                <p class="text-2xl font-black text-slate-800">{{ $totalPendaftar }}</p>
-            </div>
+    <div class="p-6 bg-white border border-slate-100 rounded-3xl shadow-sm text-center">
+        <div class="flex items-center justify-center w-12 h-12 bg-emerald-50 rounded-2xl text-emerald-600 mx-auto mb-3">
+            <i class="fas fa-user-friends"></i>
         </div>
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Jamaah</p>
+        <p class="text-2xl font-black text-slate-800">{{ $totalPendaftar }}</p>
     </div>
     
-    <div class="p-6 bg-white border border-slate-100 rounded-3xl shadow-sm">
-        <div class="flex items-center">
-            <div class="flex items-center justify-center w-12 h-12 bg-blue-50 rounded-2xl text-blue-600">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="ml-4">
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Seat Tersedia</p>
-                <p class="text-2xl font-black text-slate-800">{{ $sudahVerifikasi }}</p>
-            </div>
+    <div class="p-6 bg-white border border-slate-100 rounded-3xl shadow-sm text-center">
+        <div class="flex items-center justify-center w-12 h-12 bg-blue-50 rounded-2xl text-blue-600 mx-auto mb-3">
+            <i class="fas fa-check-circle"></i>
         </div>
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Seat Tersedia</p>
+        <p class="text-2xl font-black text-slate-800">{{ $sudahVerifikasi }}</p>
     </div>
     
-    <div class="p-6 bg-white border border-slate-100 rounded-3xl shadow-sm border-b-4 border-amber-400">
-        <div class="flex items-center">
-            <div class="flex items-center justify-center w-12 h-12 bg-amber-50 rounded-2xl text-amber-600">
-                <i class="fas fa-hourglass-half"></i>
-            </div>
-            <div class="ml-4">
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Kuota Menipis</p>
-                <p class="text-2xl font-black text-slate-800">{{ $prosesDokumen }}</p>
-            </div>
+    <div class="p-6 bg-white border border-slate-100 rounded-3xl shadow-sm border-b-4 border-amber-400 text-center">
+        <div class="flex items-center justify-center w-12 h-12 bg-amber-50 rounded-2xl text-amber-600 mx-auto mb-3">
+            <i class="fas fa-hourglass-half"></i>
         </div>
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Kuota Menipis</p>
+        <p class="text-2xl font-black text-slate-800">{{ $prosesDokumen }}</p>
     </div>
     
-    <div class="p-6 bg-white border border-slate-100 rounded-3xl shadow-sm border-b-4 border-red-400">
-        <div class="flex items-center">
-            <div class="flex items-center justify-center w-12 h-12 bg-red-50 rounded-2xl text-red-600">
-                <i class="fas fa-ban"></i>
-            </div>
-            <div class="ml-4">
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Daftar Hari Ini</p>
-                <p class="text-2xl font-black text-slate-800">{{ $daftarHariIni }}</p>
-            </div>
+    <div class="p-6 bg-white border border-slate-100 rounded-3xl shadow-sm border-b-4 border-red-400 text-center">
+        <div class="flex items-center justify-center w-12 h-12 bg-red-50 rounded-2xl text-red-600 mx-auto mb-3">
+            <i class="fas fa-ban"></i>
         </div>
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Daftar Hari Ini</p>
+        <p class="text-2xl font-black text-slate-800">{{ $daftarHariIni }}</p>
     </div>
 </div>
 
-<!-- Form Pencarian -->
-<div class="p-8 mb-8 bg-white border border-slate-100 rounded-3xl shadow-sm">
-    <form action="{{ route('staff.reports.incoming') }}" method="GET" class="grid grid-cols-1 gap-5 md:grid-cols-4">
-        <div class="space-y-1.5">
-            <label class="text-[11px] font-black text-slate-400 uppercase ml-1">Cari Jamaah</label>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama / SKU..." class="w-full px-4 py-2.5 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-emerald-500">
-        </div>
-        <div class="space-y-1.5">
-            <label class="text-[11px] font-black text-slate-400 uppercase ml-1">Status Kuota</label>
-            <select name="status" class="w-full px-4 py-2.5 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-emerald-500">
-                <option value="">Semua Status</option>
-                <option value="tersedia" {{ request('status') == 'tersedia' ? 'selected' : '' }}>Tersedia</option>
-                <option value="menipis" {{ request('status') == 'menipis' ? 'selected' : '' }}>Sisa Sedikit</option>
-                <option value="penuh" {{ request('status') == 'penuh' ? 'selected' : '' }}>Penuh</option>
-            </select>
-        </div>
-        <div class="space-y-1.5">
-            <label class="text-[11px] font-black text-slate-400 uppercase ml-1">Dari Tanggal</label>
-            <input type="date" name="start_date" value="{{ request('start_date') }}" class="w-full px-4 py-2.5 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-emerald-500">
-        </div>
-        <div class="flex items-end space-x-2">
-            <div class="flex-1 space-y-1.5">
-                <label class="text-[11px] font-black text-slate-400 uppercase ml-1">Sampai</label>
-                <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full px-4 py-2.5 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-emerald-500">
-            </div>
-            <button type="submit" class="p-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition">
-                <i class="fas fa-search"></i>
-            </button>
-        </div>
-    </form>
-</div>
-
-<!-- Tabel Manifest (Sinkron dengan Admin) -->
+<!-- Tabel Manifest -->
 <div class="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden">
     <div class="px-8 py-5 border-b border-slate-50 bg-slate-50/30">
         <h3 class="text-lg font-black text-slate-800">List Manifest Jamaah Terkini</h3>
@@ -183,18 +135,17 @@
                                 <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-[9px] font-black rounded-full uppercase">Tersedia</span>
                             @endif
                         </td>
-                        <td class="px-8 py-5">
+                        <td class="px-8 py-5 text-center">
                             <div class="flex items-center justify-center gap-2">
-                                <a href="#" class="p-2 text-slate-400 hover:text-emerald-600 transition" title="Lihat Detail"><i class="fas fa-eye"></i></a>
-                                <a href="#" class="p-2 text-slate-400 hover:text-blue-600 transition" title="Cetak Kartu"><i class="fas fa-print"></i></a>
+                                <a href="{{ route('staff.manifest.show', $data->id) }}" class="p-2 text-slate-400 hover:text-emerald-600 transition" title="Lihat Detail"><i class="fas fa-eye"></i></a>
+                                {{-- BUTTON PRINTER DIUBAH DISINI --}}
+                                <a href="{{ route('staff.manifest.print', $data->id) }}" target="_blank" class="p-2 text-slate-400 hover:text-blue-600 transition" title="Cetak Kartu"><i class="fas fa-print"></i></a>
                             </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-8 py-20 text-center text-slate-400 font-bold">
-                            Belum ada jamaah yang terdaftar di sistem.
-                        </td>
+                        <td colspan="6" class="px-8 py-20 text-center text-slate-400 font-bold">Belum ada jamaah yang terdaftar.</td>
                     </tr>
                 @endforelse
             </tbody>
