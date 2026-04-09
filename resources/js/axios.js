@@ -1,12 +1,14 @@
 import axios from "axios";
 
 const web = axios.create({
-  baseURL: "https://imadinahharomain.com",  // root aplikasi Laravel
-  withCredentials: true,              // kirim cookie & XSRF-TOKEN
+  // UBAH DISINI: Gunakan "/" agar otomatis mendeteksi localhost atau domain asli
+  baseURL: "/",  
+  
+  withCredentials: true, // WAJIB: Agar cookie login tersimpan
   headers: {
-    Accept: "application/json",
+    "X-Requested-With": "XMLHttpRequest",
+    "Accept": "application/json",
   },
 });
 
 export default web;
-

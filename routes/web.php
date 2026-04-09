@@ -26,7 +26,7 @@ Route::get('/', function () {
         return redirect(match ($user->role) {
             'Admin'             => route('admin.dashboard'),
             'Staf Registrasi'   => route('staff.dashboard'),
-            'User'              => route('manajergudang.dashboard'), 
+            'User'              => route('user.dashboard'), 
             default             => '/login',
         });
     }
