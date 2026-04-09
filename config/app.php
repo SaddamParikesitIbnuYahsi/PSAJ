@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Stockify'),
+    'name' => env('APP_NAME', 'imadinahharomain'),
 
     /*
     |--------------------------------------------------------------------------
@@ -28,7 +28,7 @@ return [
     */
 
     'logo' => env('APP_LOGO', null), //
-    "appDescription" => env('APP_DESCRIPTION', 'Stockify - Your Stock Management Solution'),
+    "appDescription" => env('APP_DESCRIPTION', 'imadinahharomain'),
 
     /*
     |--------------------------------------------------------------------------

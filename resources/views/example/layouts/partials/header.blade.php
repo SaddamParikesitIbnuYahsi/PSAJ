@@ -2,7 +2,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="#">
 <meta name="author" content="#">
-<meta name="generator" content="Laravel">
+<meta name="generator" content="imadinahharomain">
 
 <title>{{ $title }}</title>
 @vite(['resources/css/app.css','resources/js/app.js'])
